@@ -1,0 +1,24 @@
+{
+  "name": "raspi-yoro",
+  "version": "1.0.0",
+  "description": "- 最新版にアップデート   - コンソールで下記を実行   cd ~/raspi-yoro   git pull origin   npm install   - 再起動   sudo reboot",
+  "main": "config-sample.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yoshiaki110/raspi-yoro.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Yoshiaki110/raspi-yoro/issues"
+  },
+  "homepage": "https://github.com/Yoshiaki110/raspi-yoro#readme",
+  "dependencies": {
+    "azure-event-hubs": "0.0.8",
+    "azure-iot-device-mqtt": "^1.1.17",
+    "sensortag": "^1.3.0"
+  }
+}

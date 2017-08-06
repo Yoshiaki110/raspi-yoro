@@ -1,3 +1,4 @@
-exports.id = '<Your Cumulocity ID>';
-exports.password = '<Your Cumulocity Password>';
-
+exports.DeviceId = '';
+exports.ConnectString = '';
+exports.SharedAccessKey = '';
+exports.HostName = '';
