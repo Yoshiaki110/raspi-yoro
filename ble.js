@@ -9,7 +9,7 @@ var Message = require('azure-iot-device').Message;
 var IoTDevice = (function() {
   // コンストラクタ
   var IoTDevice = function(hostName, deviceId, accessKey) {
-      if(!(this instanceof IoTDevice)) {
+      if (!(this instanceof IoTDevice)) {
           return new IoTDevice(hostName, deviceId, accessKey);
       }
       this.hostName = hostName;
@@ -19,9 +19,9 @@ var IoTDevice = (function() {
       this.client = clientFromConnectionString(connectionString);
       this.client.open(function (err) {
         if (err) {
-          console.log('Could not connect: ' + err);
+          console.log('IoTHubと接続できない: ' + err);
         } else {
-          console.log('Client connected');
+          console.log('IoTHubと接続完了');
         }
       });
   }
@@ -30,14 +30,14 @@ var IoTDevice = (function() {
 
   // プロトタイプ内でメソッドを定義
   p.send = function(val) {
-    var data = JSON.stringify({ deviceId: this.deviceId, lux: val });
+    var data = JSON.stringify({ deviceId: this.deviceId, bid: config.BottleId, pos: val });
     var message = new Message(data);
     console.log("Sending message: " + message.getData());
     this.client.sendEvent(message, function (err) {
       if (err) {
-          console.log('send error: ' + err);
+          console.log('IoTHubへの送信エラー: ' + err);
       } else {
-        console.log('send success');
+        console.log('IoTHubへの送信完了');
       }
     });
   }
@@ -51,15 +51,13 @@ var device = new IoTDevice(config.HostName, config.DeviceId, config.SharedAccess
 * $ npm install sandeepmistry/node-sensortag ## (require `libbluetooth-dev`)
 * $ TI_UUID=your_ti_sensor_tag_UUID node this_file.js
 */
-var myAddress = process.env["TI_ADDRESS"] || "24:71:89:E8:B4:86";
 
 function ti_accelerometer(conned_obj) {
   var period = 1000; // ms
   conned_obj.enableAccelerometer(function() {
     conned_obj.setAccelerometerPeriod(period, function() {
       conned_obj.notifyAccelerometer(function() {
-        console.info("ready: notifyAccelerometer");
-        console.info("notify period = " + period + "ms");
+        console.info("加速度センサの取得間隔: " + period + "ms");
         conned_obj.on('accelerometerChange', function(x, y, z) {
             console.log('\taccel_x = %d G', x.toFixed(1));
             console.log('\taccel_y = %d G', y.toFixed(1));
@@ -67,32 +65,31 @@ function ti_accelerometer(conned_obj) {
             var pos = parseInt((z + 1) * 90);
             if (pos > 180) { pos = 180; }
             if (pos < 0) { pos = 0; }
+            // todo 同じ値は送信しない、3回中中間を送信
             device.send(parseInt(pos));
         });
       });
     });
   });
 }
- 
+
 var SensorTag = require('sensortag');
-console.info(">> STOP: Ctrl+C or SensorTag power off");
-console.info("start");
 function setupSensor() {
-  console.info("waiting for connect");
+  console.info("CC2650を探しています");
   SensorTag.discover(function(sensorTag) {
-    console.log("<><><> id:", sensorTag.id);
-    console.info("found: connect and setup ... (waiting 5~10 seconds)");
+    console.info("CC2650を発見 id:", sensorTag.id);
     sensorTag.connectAndSetup(function() {
       sensorTag.readDeviceName(function(error, deviceName) {
-        console.info("connect: " + deviceName);
+        console.info("CC2650と接続しました: " + deviceName);
         ti_accelerometer(sensorTag);
       });
     });
     /* In case of SensorTag PowerOff or out of range when fired `onDisconnect` */
     sensorTag.on("disconnect", function() {
-      console.log("<><><> id:", sensorTag.id);
-      console.info("disconnect and exit");
+      console.info("CC2650との接続解除 id:", sensorTag.id);
       process.exit(0);
+      // todo 再接続
+      setupSensor();
     });
   });
 }

@@ -2,22 +2,25 @@
 
 var config = require('./config.js');
 
-var g_angle = 0;
-var g_dir = 1;
+var g_curpos = 180;      // 現在の位置
+var g_distpos = 180;     // 目標の位置
+var g_emergency = 0;     // 緊急モード
+
 
 function write(data) {
   console.log(data);
+//  fs.writeSync(fd, data + "\n");
 }
 
 function setAngle() {
-  console.log();
-  g_angle = g_angle + g_dir;
-  if ( g_angle <= 0) {
-    g_dir = 1;
-  } else if (g_angle >= 180) {
-    g_dir = -1;
+  if (g_curpos == g_distpos) {
+    return;
+  } else if (g_curpos > g_distpos) {
+    g_curpos -= 1;
+  } else if (g_curpos < g_distpos) {
+    g_curpos += 1;
   }
-  write(g_angle);
+  write(g_curpos);
 }
 
 
@@ -33,10 +36,11 @@ var printError = function (err) {
 var printMessage = function (message) {
   console.log('Message received: ');
 //  console.log(JSON.stringify(message.body));
-  var str = JSON.stringify(message.body.lux);
-  write(parseInt(str));
-  //console.log(str);
-  //console.log('');
+  var str = JSON.stringify(message.body.pos);
+  var bid = JSON.stringify(message.body.bid);
+  if (bid == config.BottleId) {
+    write(parseInt(str));
+  }
 };
 
 var client = EventHubClient.fromConnectionString(config.ConnectString);
@@ -52,3 +56,15 @@ client.open()
         });
     })
     .catch(printError);
+
+
+/*
+var fs = require("fs");
+var fd = fs.openSync("fifo", "w");
+
+function loop(){
+  setAngle();
+  setTimeout(loop, 50);
+}
+setTimeout(loop,10);
+*/
