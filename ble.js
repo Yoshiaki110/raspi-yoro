@@ -1,6 +1,7 @@
 'use strict';
 
 var config = require('./config.js');
+var SensorTag = require('sensortag');
 
 var clientFromConnectionString = require('azure-iot-device-mqtt').clientFromConnectionString;
 //var clientFromConnectionString = require('azure-iot-device-http').clientFromConnectionString;
@@ -73,7 +74,6 @@ function ti_accelerometer(conned_obj) {
   });
 }
 
-var SensorTag = require('sensortag');
 function setupSensor() {
   console.info("CC2650を探しています");
   SensorTag.discover(function(sensorTag) {

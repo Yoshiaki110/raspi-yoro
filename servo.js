@@ -1,6 +1,10 @@
 'use strict';
 
 var config = require('./config.js');
+console.log('bid : ' + config.BottleId);
+var EventHubClient = require('azure-event-hubs').Client;
+var fs = require("fs");
+//var fd = fs.openSync("fifo", "w");
 
 var g_curpos = 180;      // 現在の位置
 var g_distpos = 180;     // 目標の位置
@@ -24,11 +28,6 @@ function setAngle() {
 }
 
 
-
-
-
-var EventHubClient = require('azure-event-hubs').Client;
-
 var printError = function (err) {
   console.log(err.message);
 };
@@ -36,8 +35,9 @@ var printError = function (err) {
 var printMessage = function (message) {
   console.log('Message received: ');
 //  console.log(JSON.stringify(message.body));
-  var str = JSON.stringify(message.body.pos);
-  var bid = JSON.stringify(message.body.bid);
+  var str = message.body.pos;
+  var bid = message.body.bid;
+  console.log(bid + ' - ' + config.BottleId);
   if (bid == config.BottleId) {
     write(parseInt(str));
   }
