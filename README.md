@@ -30,29 +30,25 @@
 - 無線LAN設定
   - Windowsのコマンドプロンプトを起動（管理者として実行）
     - 仮のIPアドレスを設定
-
-    arp -s 169.254.35.170 b8-27-eb-88-f6-53
+    `arp -s 169.254.35.170 b8-27-eb-88-f6-53`
 
   - sshで169.254.35.170に接続
     - sshはRLogin、Tera Term、PuTTYでもなんでもいい
     - ユーザ名「pi」、パスワード「root」
     - 無線LANの設定をする
-
-    sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+    `sudo nano /etc/wpa_supplicant/wpa_supplicant.conf`
 
     - 無線LANが接続されたか確認とIPアドレスの確認
-
-    ifconfig wlan0
+    `ifconfig wlan0`
 
     - 接続されていない場合、下記コマンドで無線LANを再起動
 
-    sudo ifdown wlan0
-    sudo ifup wlan0
+    sudo ifdown wlan0  
+    sudo ifup wlan0  
 
   - ssh切断
   - 仮のIPアドレスを削除
-
-    arp -d 169.254.35.170
+    `arp -d 169.254.35.170`
 
 
 - 最新版にアップデート
@@ -61,13 +57,12 @@
     - ユーザ名「pi」、パスワード「root」
   - コンソールで下記を実行
 
-    cd ~/raspi-yoro
-    git pull origin
-    npm install
+    cd ~/raspi-yoro  
+    git pull origin  
+    npm install  
 
 - 再起動
-
-    sudo reboot
+    `sudo reboot`
 
 ### 設定ファイル(config.js)
 - 
@@ -77,9 +72,9 @@
 - 電源ONで全てのプログラムが自動実行するようになっている
     - プログラムの停止
 
-    sudo pkill -f "sudo node ble.js"
-    sudo pkill -f "node ble.js"
-    sudo pkill -f "sudo python servo.py"
+    sudo pkill -f "sudo node ble.js"  
+    sudo pkill -f "node ble.js"  
+    sudo pkill -f "sudo python servo.py"  
 
 
 ### TIPS
