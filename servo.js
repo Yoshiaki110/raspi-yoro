@@ -4,7 +4,9 @@ var config = require('./config.js');
 console.log('bid : ' + config.BottleId);
 var EventHubClient = require('azure-event-hubs').Client;
 var fs = require("fs");
-//var fd = fs.openSync("fifo", "w");
+console.log("servo.pyの接続待ち");
+var fd = fs.openSync("fifo", "w");
+console.log("servo.pyと接続しました");
 
 var g_curpos = 180;      // 現在の位置
 var g_distpos = 180;     // 目標の位置
@@ -13,7 +15,7 @@ var g_emergency = 0;     // 緊急モード
 
 function write(data) {
   console.log(data);
-//  fs.writeSync(fd, data + "\n");
+  fs.writeSync(fd, data + "\n");
 }
 
 function setAngle() {
@@ -33,13 +35,14 @@ var printError = function (err) {
 };
 
 var printMessage = function (message) {
-  console.log('Message received: ');
+//  console.log('Message received: ');
 //  console.log(JSON.stringify(message.body));
   var str = message.body.pos;
   var bid = message.body.bid;
-  console.log(bid + ' - ' + config.BottleId);
+  console.log(bid + ' - ' + config.BottleId + ' ' + str);
   if (bid == config.BottleId) {
-    write(parseInt(str));
+//    write(parseInt(str));
+    g_distpos = parseInt(str);
   }
 };
 
@@ -57,14 +60,8 @@ client.open()
     })
     .catch(printError);
 
-
-/*
-var fs = require("fs");
-var fd = fs.openSync("fifo", "w");
-
 function loop(){
   setAngle();
-  setTimeout(loop, 50);
+  setTimeout(loop, 20);
 }
 setTimeout(loop,10);
-*/

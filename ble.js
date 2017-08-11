@@ -7,6 +7,8 @@ var clientFromConnectionString = require('azure-iot-device-mqtt').clientFromConn
 //var clientFromConnectionString = require('azure-iot-device-http').clientFromConnectionString;
 var Message = require('azure-iot-device').Message;
 
+var sended = -1000;
+
 var IoTDevice = (function() {
   // コンストラクタ
   var IoTDevice = function(hostName, deviceId, accessKey) {
@@ -31,16 +33,20 @@ var IoTDevice = (function() {
 
   // プロトタイプ内でメソッドを定義
   p.send = function(val) {
-    var data = JSON.stringify({ deviceId: this.deviceId, bid: config.BottleId, pos: val });
-    var message = new Message(data);
-    console.log("Sending message: " + message.getData());
-    this.client.sendEvent(message, function (err) {
-      if (err) {
+//    if (sended != val) {
+    if (Math.abs(sended - val) > 2) {
+      var data = JSON.stringify({ deviceId: this.deviceId, bid: config.BottleId, pos: val });
+      var message = new Message(data);
+      console.log("IoTHubへ送信: " + message.getData());
+      this.client.sendEvent(message, function (err) {
+        if (err) {
           console.log('IoTHubへの送信エラー: ' + err);
-      } else {
-        console.log('IoTHubへの送信完了');
-      }
-    });
+        } else {
+          console.log('IoTHubへの送信完了');
+        }
+      });
+      sended = val;
+    }
   }
 
   return IoTDevice;
@@ -54,15 +60,15 @@ var device = new IoTDevice(config.HostName, config.DeviceId, config.SharedAccess
 */
 
 function ti_accelerometer(conned_obj) {
-  var period = 1000; // ms
+  var period = 300; // ms
   conned_obj.enableAccelerometer(function() {
     conned_obj.setAccelerometerPeriod(period, function() {
       conned_obj.notifyAccelerometer(function() {
         console.info("加速度センサの取得間隔: " + period + "ms");
         conned_obj.on('accelerometerChange', function(x, y, z) {
-            console.log('\taccel_x = %d G', x.toFixed(1));
-            console.log('\taccel_y = %d G', y.toFixed(1));
-            console.log('\taccel_z = %d G', z.toFixed(1));
+            //console.log('\taccel_x = %d G', x.toFixed(1));
+            //console.log('\taccel_y = %d G', y.toFixed(1));
+            //console.log('\taccel_z = %d G', z.toFixed(1));
             var pos = parseInt((z + 1) * 90);
             if (pos > 180) { pos = 180; }
             if (pos < 0) { pos = 0; }
