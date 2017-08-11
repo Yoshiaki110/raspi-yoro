@@ -69,7 +69,8 @@ function ti_accelerometer(conned_obj) {
             //console.log('\taccel_x = %d G', x.toFixed(1));
             //console.log('\taccel_y = %d G', y.toFixed(1));
             //console.log('\taccel_z = %d G', z.toFixed(1));
-            var pos = parseInt((z + 1) * 90);
+//            var pos = parseInt((z + 1) * 90);
+            var pos = parseInt((z - 1) * (-90));
             if (pos > 180) { pos = 180; }
             if (pos < 0) { pos = 0; }
             // todo 同じ値は送信しない、3回中中間を送信

@@ -34,9 +34,10 @@ while line:
     i = i + 1
     try:
         n = int(line[:-1])
-        val = (2400-500) / 180.0 * n + 500
-        print str(i) + " " + line[:-1] + " " + str(val)
-        pi.set_servo_pulsewidth(7, val)
+        if n > 50:
+            val = (2400-500) / 180.0 * n + 500
+            print str(i) + " " + line[:-1] + " " + str(val)
+            pi.set_servo_pulsewidth(7, val)
     except:
         pass
     line = f.readline()
