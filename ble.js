@@ -94,7 +94,7 @@ function setupSensor() {
     /* In case of SensorTag PowerOff or out of range when fired `onDisconnect` */
     sensorTag.on("disconnect", function() {
       console.info("CC2650との接続解除 id:", sensorTag.id);
-      process.exit(0);
+      //process.exit(0);
       // todo 再接続
       setupSensor();
     });

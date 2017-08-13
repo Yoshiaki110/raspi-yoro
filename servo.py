@@ -25,20 +25,21 @@ def cb_interrupt(gpio, level, tick):
 cb = pi.callback(17, pigpio.FALLING_EDGE, cb_interrupt)
 
 # 
-print('接続待ち')
-f = open('fifo')
-print('接続しました')
-line = f.readline() # 1行を文字列として読み込む(改行文字も含まれる)
-i = 0
-while line:
-    i = i + 1
-    try:
-        n = int(line[:-1])
-        if n > 50:
-            val = (2400-500) / 180.0 * n + 500
-            print str(i) + " " + line[:-1] + " " + str(val)
-            pi.set_servo_pulsewidth(7, val)
-    except:
-        pass
-    line = f.readline()
-f.close
+while True:
+    print('接続待ち')
+    f = open('fifo')
+    print('接続しました')
+    line = f.readline() # 1行を文字列として読み込む(改行文字も含まれる)
+    i = 0
+    while line:
+        i = i + 1
+        try:
+            n = int(line[:-1])
+            if n > 50:
+                val = (2400-500) / 180.0 * n + 500
+                print str(i) + " " + line[:-1] + " " + str(val)
+                pi.set_servo_pulsewidth(7, val)
+        except:
+            pass
+        line = f.readline()
+    f.close
