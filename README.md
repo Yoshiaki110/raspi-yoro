@@ -13,32 +13,25 @@
   - コマンド「sudo python servo.py」
 
 ### 配線
-    +---+---+
-    |+3v|+5v|
-    +---+---+
-    | 2 |+5v|
-    +---+---+
-    | 3 |GND|
-    +---+---+
-    | 4 | 14|
-    +---+---+
-    |GND| 15|
-    +---+---+
-    |   |   |
+- 下記３つを使用
+  - 17 スイッチ
+  - 8  LED
+  - 7  サーボ
+- 「gpio readall」でピンアサインが見れる
 
 ### Raspberry Piと接続
 - 無線LAN設定
   - Windowsのコマンドプロンプトを起動（管理者として実行）
-    - 仮のIPアドレスを設定
+    - 仮のIPアドレスを設定  
     `arp -s 169.254.35.170 b8-27-eb-88-f6-53`
 
   - sshで169.254.35.170に接続
     - sshはRLogin、Tera Term、PuTTYでもなんでもいい
     - ユーザ名「pi」、パスワード「root」
-    - 無線LANの設定をする
+    - 無線LANの設定をする  
     `sudo nano /etc/wpa_supplicant/wpa_supplicant.conf`
 
-    - 無線LANが接続されたか確認とIPアドレスの確認
+    - 無線LANが接続されたか確認とIPアドレスの確認  
     `ifconfig wlan0`
 
     - 接続されていない場合、下記コマンドで無線LANを再起動
@@ -61,7 +54,7 @@
     git pull origin  
     npm install  
 
-- 再起動
+- 再起動  
     `sudo reboot`
 
 ### 設定ファイル(config.js)
@@ -73,9 +66,11 @@
     - プログラムの停止
 
     sudo pkill -f "sudo node ble.js"  
-    sudo pkill -f "node ble.js"  
+    sudo pkill -f "node servo.js"  
     sudo pkill -f "sudo python servo.py"  
 
+    - 全プログラムの停止  
+    `sudo pkill -f "sudo node ble.js" ` 
 
 ### TIPS
 - ネットワークが...
