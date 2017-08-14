@@ -29,10 +29,7 @@ function setAngle() {
   write(g_curpos);
 }
 
-
-var printError = function (err) {
-  console.log(err.message);
-};
+var client = EventHubClient.fromConnectionString(config.ConnectString);
 
 var printMessage = function (message) {
 //  console.log('Message received: ');
@@ -46,22 +43,45 @@ var printMessage = function (message) {
   }
 };
 
-var client = EventHubClient.fromConnectionString(config.ConnectString);
-client.open()
-    .then(client.getPartitionIds.bind(client))
-    .then(function (partitionIds) {
-        return partitionIds.map(function (partitionId) {
-            return client.createReceiver('$Default', partitionId, { 'startAfterTime' : Date.now()}).then(function(receiver) {
-                console.log('Created partition receiver: ' + partitionId)
-                receiver.on('errorReceived', printError);
-                receiver.on('message', printMessage);
+function connect() {
+    client.open()
+        .then(client.getPartitionIds.bind(client))
+        .then(function (partitionIds) {
+            return partitionIds.map(function (partitionId) {
+                return client.createReceiver('$Default', partitionId, { 'startAfterTime' : Date.now()}).then(function(receiver) {
+                    console.log('Created partition receiver: ' + partitionId)
+                    receiver.on('errorReceived', printError);
+                    receiver.on('message', printMessage);
+                });
             });
-        });
-    })
-    .catch(printError);
+        })
+        .catch(printError);
+}
 
-function loop(){
+var printError = function (err) {
+  console.log('Azure Error');
+  console.log(err.message);
+
+//  client.close();
+  var client = EventHubClient.fromConnectionString(config.ConnectString);
+  setTimeout(connect, 1000);
+};
+
+
+connect();
+
+function loop() {
   setAngle();
   setTimeout(loop, 20);
 }
-setTimeout(loop,10);
+setTimeout(loop, 10);
+
+/*
+function test() {
+//  client.close();
+  console.log('aaaa');
+  var client = EventHubClient.fromConnectionString(config.ConnectString);
+  connect();
+}
+setTimeout(test, 10000);
+*/
