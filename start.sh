@@ -4,10 +4,11 @@ sleep 1s
 gpio -g write 8 1
 while :
 do
-  ifconfig wlan0 | grep inet[6]
+  ifconfig wlan0 >> start.log
+  ifconfig wlan0 | grep inet[^6]
   if [ $? -ne 0 ]; then
     sleep 1s
-    gpio -g write 8 0
+    gpio -g write 8 0  # ネットが繋がっていないと効かない
     sleep 1s
     gpio -g write 8 1
   else
