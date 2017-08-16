@@ -10,7 +10,6 @@ console.log("servo.pyと接続しました");
 
 var g_curpos = 180;      // 現在の位置
 var g_distpos = 180;     // 目標の位置
-var g_emergency = 0;     // 緊急モード
 
 
 function write(data) {

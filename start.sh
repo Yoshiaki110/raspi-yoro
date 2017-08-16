@@ -4,6 +4,7 @@ sleep 1s
 gpio -g write 8 1
 while :
 do
+  date >> start.log
   ifconfig wlan0 >> start.log
   ifconfig wlan0 | grep inet[^6]
   if [ $? -ne 0 ]; then

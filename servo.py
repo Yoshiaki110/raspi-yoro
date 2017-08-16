@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # coding: UTF-8
 
+import time
 import pigpio
 
 # setup
@@ -10,17 +11,21 @@ pi.set_pull_up_down(17, pigpio.PUD_UP)
 pi.set_mode(8, pigpio.OUTPUT)
 
 e_mode = False
+l_time = 0
 def cb_interrupt(gpio, level, tick):
-    global e_mode
-    print (gpio, level, tick)
-    if e_mode:
-        print ("True", gpio, level, tick)
-        e_mode = False
-        pi.write(8,1)
-    else:
-        print ("False", gpio, level, tick)
-        e_mode = True
-        pi.write(8,0)
+    global l_time
+    if time.time() - l_time > 0.3:
+        global e_mode
+        print (gpio, level, tick)
+        if e_mode:
+            print ("True", gpio, level, tick)
+            e_mode = False
+            pi.write(8,1)
+        else:
+            print ("False", gpio, level, tick)
+            e_mode = True
+            pi.write(8,0)
+        l_time = time.time()
 
 cb = pi.callback(17, pigpio.FALLING_EDGE, cb_interrupt)
 
