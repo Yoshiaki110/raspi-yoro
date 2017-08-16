@@ -8,24 +8,24 @@ console.log("servo.pyの接続待ち");
 var fd = fs.openSync("fifo", "w");
 console.log("servo.pyと接続しました");
 
-var g_curpos = 180;      // 現在の位置
-var g_distpos = 180;     // 目標の位置
+var g_lastpos = -180;      // 以前の位置
 
-
-function write(data) {
-  console.log(data);
-  fs.writeSync(fd, data + "\n");
-}
-
-function setAngle() {
-  if (g_curpos == g_distpos) {
-    return;
-  } else if (g_curpos > g_distpos) {
-    g_curpos -= 1;
-  } else if (g_curpos < g_distpos) {
-    g_curpos += 1;
+function setAngle(data) {
+  if (config.Reverse != undefined) {
+    if (config.Reverse) {
+      data = Math.abs(data - 180);
+    }
   }
-  write(g_curpos);
+  if (g_lastpos == data) {
+    return;
+  }
+  console.log(data);
+  try {
+    fs.writeSync(fd, data + "\n");
+  } catch (e) {
+    console.log(e);
+  }
+  g_lastpos = data;
 }
 
 var client = EventHubClient.fromConnectionString(config.ConnectString);
@@ -37,12 +37,12 @@ var printMessage = function (message) {
   var bid = message.body.bid;
   console.log(bid + ' - ' + config.BottleId + ' ' + str);
   if (bid == config.BottleId) {
-//    write(parseInt(str));
-    g_distpos = parseInt(str);
+    setAngle(parseInt(str));
   }
 };
 
 function connect() {
+  console.log('connect');
     client.open()
         .then(client.getPartitionIds.bind(client))
         .then(function (partitionIds) {
@@ -68,13 +68,13 @@ var printError = function (err) {
 
 
 connect();
-
+/*
 function loop() {
   setAngle();
   setTimeout(loop, 20);
 }
 setTimeout(loop, 10);
-
+*/
 /*
 function test() {
 //  client.close();

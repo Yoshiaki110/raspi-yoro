@@ -34,13 +34,15 @@ var IoTDevice = (function() {
   // プロトタイプ内でメソッドを定義
   p.send = function(val) {
 //    if (sended != val) {
-    if (Math.abs(sended - val) > 2) {
+    if (Math.abs(sended - val) > 1) {        // ほぼ同じ値は送信しない
       var data = JSON.stringify({ deviceId: this.deviceId, bid: config.BottleId, pos: val });
       var message = new Message(data);
       console.log("IoTHubへ送信: " + message.getData());
       this.client.sendEvent(message, function (err) {
         if (err) {
           console.log('IoTHubへの送信エラー: ' + err);
+          // うまく動くかわからないが、Azureがエラーを返した場合の処理
+          device = new IoTDevice(config.HostName, config.DeviceId, config.SharedAccessKey);
         } else {
           console.log('IoTHubへの送信完了');
         }
@@ -73,7 +75,6 @@ function ti_accelerometer(conned_obj) {
             var pos = parseInt((z - 1) * (-90));
             if (pos > 180) { pos = 180; }
             if (pos < 0) { pos = 0; }
-            // todo 同じ値は送信しない、3回中中間を送信
             device.send(parseInt(pos));
         });
       });
