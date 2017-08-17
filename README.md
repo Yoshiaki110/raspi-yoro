@@ -68,21 +68,21 @@
 
     cd system
 
-    sudo mv yorobled.service /etc/systemd/system/
+    sudo cp yorobled.service /etc/systemd/system/
     systemctl list-unit-files | grep -i yorobled
     sudo systemctl enable yorobled
     systemctl list-unit-files | grep -i yorobled
     sudo systemctl start yorobled
     sudo journalctl -u yorobled
 
-    sudo mv yorosvjsd.service /etc/systemd/system/
+    sudo cp yorosvjsd.service /etc/systemd/system/
     systemctl list-unit-files | grep -i yorosvjsd
     sudo systemctl enable yorosvjsd
     systemctl list-unit-files | grep -i yorosvjsd
     sudo systemctl start yorosvjsd
     sudo journalctl -u yorosvjsd
 
-    sudo mv yorosvpyd.service /etc/systemd/system/
+    sudo cp yorosvpyd.service /etc/systemd/system/
     systemctl list-unit-files | grep -i yorosvpyd
     sudo systemctl enable yorosvpyd
     systemctl list-unit-files | grep -i yorosvpyd

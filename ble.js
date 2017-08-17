@@ -1,5 +1,8 @@
 'use strict';
 
+var common = require('./common.js');
+common.LineMsg('ble.js開始しました');
+
 var config = require('./config.js');
 var SensorTag = require('sensortag');
 
@@ -23,6 +26,7 @@ var IoTDevice = (function() {
       this.client.open(function (err) {
         if (err) {
           console.log('IoTHubと接続できない: ' + err);
+          common.LineMsg('ble.js IoTHubと接続できない');
           process.exit(1);
         } else {
           console.log('IoTHubと接続完了');
@@ -41,6 +45,7 @@ var IoTDevice = (function() {
       this.client.sendEvent(message, function (err) {
         if (err) {
           console.log('IoTHubへの送信エラー: ' + err);
+          common.LineMsg('ble.js IoTHubへの送信エラー');
           process.exit(1);
         } else {
           console.log('IoTHubへの送信完了');

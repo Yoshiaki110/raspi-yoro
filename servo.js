@@ -1,5 +1,8 @@
 'use strict';
 
+var common = require('./common.js');
+common.LineMsg('servo.js開始しました');
+
 var config = require('./config.js');
 console.log('bid : ' + config.BottleId);
 var EventHubClient = require('azure-event-hubs').Client;
@@ -58,8 +61,9 @@ function connect() {
 }
 
 var printError = function (err) {
-  console.log('Azure Error ');
+  console.log('Azure Error');
   console.log(err.message);
+  common.LineMsg('servo.js Azure Error');
   process.exit(1);
 };
 
