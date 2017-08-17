@@ -32,10 +32,9 @@ var IoTDevice = (function() {
   var p = IoTDevice.prototype;
 
   // プロトタイプ内でメソッドを定義
-  p.send = function(val) {
-//    if (sended != val) {
-    if (Math.abs(sended - val) > 1) {        // ほぼ同じ値は送信しない
-      var data = JSON.stringify({ deviceId: this.deviceId, bid: config.BottleId, pos: val });
+  p.send = function(id, val) {
+   //if (Math.abs(sended - val) > 1) {        // ほぼ同じ値は送信しない
+      var data = JSON.stringify({ deviceId: this.deviceId, bid: id, pos: val });
       var message = new Message(data);
       console.log("IoTHubへ送信: " + message.getData());
       this.client.sendEvent(message, function (err) {
@@ -47,8 +46,8 @@ var IoTDevice = (function() {
           console.log('IoTHubへの送信完了');
         }
       });
-      sended = val;
-    }
+//      sended = val;
+//    }
   }
 
   return IoTDevice;
@@ -75,7 +74,11 @@ function ti_accelerometer(conned_obj) {
             var pos = parseInt((z - 1) * (-90));
             if (pos > 180) { pos = 180; }
             if (pos < 0) { pos = 0; }
-            device.send(parseInt(pos));
+            var val = parseInt(pos);
+            if (Math.abs(sended - val) > 1) {        // ほぼ同じ値は送信しない
+              device.send(config.BottleId, val);
+              sended = val;
+            }
         });
       });
     });
@@ -103,3 +106,8 @@ function setupSensor() {
 }
 setupSensor();
 
+function loop() {        // keep alive
+  device.send('dummy', 0);
+  setTimeout(loop, 3 * 60000);    // 3分
+}
+setTimeout(loop, 1000);
