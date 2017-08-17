@@ -23,6 +23,7 @@ var IoTDevice = (function() {
       this.client.open(function (err) {
         if (err) {
           console.log('IoTHubと接続できない: ' + err);
+          process.exit(1);
         } else {
           console.log('IoTHubと接続完了');
         }
@@ -40,8 +41,7 @@ var IoTDevice = (function() {
       this.client.sendEvent(message, function (err) {
         if (err) {
           console.log('IoTHubへの送信エラー: ' + err);
-          // うまく動くかわからないが、Azureがエラーを返した場合の処理
-          device = new IoTDevice(config.HostName, config.DeviceId, config.SharedAccessKey);
+          process.exit(1);
         } else {
           console.log('IoTHubへの送信完了');
         }
@@ -98,8 +98,7 @@ function setupSensor() {
     /* In case of SensorTag PowerOff or out of range when fired `onDisconnect` */
     sensorTag.on("disconnect", function() {
       console.info("CC2650との接続解除 id:", sensorTag.id);
-      //process.exit(0);
-      // todo 再接続
+      //process.exit(1);
       setupSensor();
     });
   });

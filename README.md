@@ -57,6 +57,39 @@
 - 再起動  
     `sudo reboot`
 
+### サービス化
+
+    sudo vi /etc/rc.local
+    pkill -f pigpio
+    systemctl list-unit-files | grep -i gpio
+    sudo systemctl enable pigpiod
+    systemctl list-unit-files | grep -i gpio
+    sudo systemctl start pigpiod
+
+    cd system
+
+    sudo mv yorobled.service /etc/systemd/system/
+    systemctl list-unit-files | grep -i yorobled
+    sudo systemctl enable yorobled
+    systemctl list-unit-files | grep -i yorobled
+    sudo systemctl start yorobled
+    sudo journalctl -u yorobled
+
+    sudo mv yorosvjsd.service /etc/systemd/system/
+    systemctl list-unit-files | grep -i yorosvjsd
+    sudo systemctl enable yorosvjsd
+    systemctl list-unit-files | grep -i yorosvjsd
+    sudo systemctl start yorosvjsd
+    sudo journalctl -u yorosvjsd
+
+    sudo mv yorosvpyd.service /etc/systemd/system/
+    systemctl list-unit-files | grep -i yorosvpyd
+    sudo systemctl enable yorosvpyd
+    systemctl list-unit-files | grep -i yorosvpyd
+    sudo systemctl start yorosvpyd
+    sudo journalctl -u yorosvpyd
+
+
 ### 設定ファイル(config.js)
 - 
 

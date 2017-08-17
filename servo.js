@@ -35,7 +35,7 @@ var printMessage = function (message) {
 //  console.log(JSON.stringify(message.body));
   var str = message.body.pos;
   var bid = message.body.bid;
-  console.log((new Date()).toTimeString() + ' ' + bid + ' - ' + config.BottleId + ' ' + str);
+  console.log(bid + ' - ' + config.BottleId + ' ' + str);
   if (bid == config.BottleId) {
     setAngle(parseInt(str));
   }
@@ -58,25 +58,10 @@ function connect() {
 }
 
 var printError = function (err) {
-  console.log('Azure Error ' + (new Date()).toTimeString());
+  console.log('Azure Error ');
   console.log(err.message);
-
-  //client.close();
-  var client = EventHubClient.fromConnectionString(config.ConnectString);
-  setTimeout(connect, 1000);
+  process.exit(1);
 };
 
-
 connect();
-/*
-しばらくすると下記のエラーなのでclient.close()を追加した
 
-Azure Error
-The message container is being closed (19154). TrackingId:6dc76b3f-7eb3-45d9-85a7-56e7263faae9_B4, SystemTracker:NoSystemTracker, Timestamp:8/16/2017 8:49:35 AM
-connect
-Azure Error
-amqp:not-allowed:A link to connection '1165116' $management node has already been opened.
-Unhandled rejection (<{"value":[{"typeName":"symbol","value"...>, no stack trace)
-
-そしたら、TypeError: Cannot read property 'close' of undefinedになっちゃった
-*/
