@@ -1,9 +1,9 @@
 'use strict';
 
 var common = require('./common.js');
-common.LineMsg('servo.js開始しました');
-
 var config = require('./config.js');
+common.LineMsg(config.BottleId + ' servo.js開始しました');
+
 console.log('bid : ' + config.BottleId);
 var EventHubClient = require('azure-event-hubs').Client;
 var fs = require("fs");
@@ -39,12 +39,13 @@ var printMessage = function (message) {
   var str = message.body.pos;
   var bid = message.body.bid;
   console.log(bid + ' - ' + config.BottleId + ' ' + str);
-  if (bid == config.BottleId) {
+  if (bid == config.ReceiveBottleId) {
     setAngle(parseInt(str));
   }
 };
 
 function connect() {
+  common.LineMsg('servo.js開始しました');
   console.log('connect');
     client.open()
         .then(client.getPartitionIds.bind(client))
@@ -67,5 +68,5 @@ var printError = function (err) {
   process.exit(1);
 };
 
-connect();
-
+//connect();
+setTimeout(connect, 10000);

@@ -1,9 +1,9 @@
 'use strict';
 
 var common = require('./common.js');
-common.LineMsg('ble.js開始しました');
-
 var config = require('./config.js');
+common.LineMsg(config.BottleId + ' ble.js開始しました');
+
 var SensorTag = require('sensortag');
 
 var clientFromConnectionString = require('azure-iot-device-mqtt').clientFromConnectionString;
@@ -112,6 +112,6 @@ setupSensor();
 
 function loop() {        // keep alive
   device.send('dummy', 0);
-  setTimeout(loop, 3 * 60000);    // 3分
+  setTimeout(loop, 10000);    // hontouha3分ni sitaikedo kidouji-no error wo sugu kenti shitaitame
 }
 setTimeout(loop, 1000);
