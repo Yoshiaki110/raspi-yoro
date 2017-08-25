@@ -11,6 +11,7 @@ var fd = fs.openSync("fifo", "w");
 console.log("servo.pyと接続しました");
 
 var g_lastpos = -180;      // 以前の位置
+var g_lasttime = 0;
 
 function setAngle(data) {
   if (config.Reverse != undefined) {
@@ -37,7 +38,8 @@ var printMessage = function (message) {
 //  console.log(JSON.stringify(message.body));
   var str = message.body.pos;
   var bid = message.body.bid;
-  console.log(bid + ' - ' + config.BottleId + ' ' + str);
+  g_lasttime = (new Date()).getTime();
+  console.log(g_lasttime + ' ' + bid + ' - ' + config.BottleId + ' ' + str);
   if (bid == config.ReceiveBottleId) {
     setAngle(parseInt(str));
   }
@@ -67,11 +69,25 @@ var printError = function (err) {
   setTimeout(process.exit, 10000, 1);
 };
 
+function loop() {
+  var time = (new Date()).getTime();
+  var diff = time - g_lasttime;
+  console.log(time + ' - ' + g_lasttime + ' = ' + diff);
+  if (diff > 20000) {
+    console.log('not comming heart beat');
+    common.LineMsg('servo.js not comming heart beat');
+    setTimeout(process.exit, 10000, 1);
+  }
+  setTimeout(loop, 10000);
+}
+
 function prepare() {
   if (common.IpAddress().length == 0) {
     setTimeout(prepare, 1000);
   } else {
     connect()
+    g_lasttime = (new Date()).getTime();
+    loop();
   }
 }
 
