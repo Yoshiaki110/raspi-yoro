@@ -11,8 +11,10 @@ pi.set_mode(17, pigpio.INPUT)
 pi.set_pull_up_down(17, pigpio.PUD_UP)
 pi.set_mode(8, pigpio.OUTPUT)
 
-d_pos = 0
-c_pos = 0
+###d_pos = 0
+###c_pos = 0
+d_pos = 180
+c_pos = 180
 e_mode = False
 l_time = 0
 
@@ -26,20 +28,22 @@ def cb_interrupt(gpio, level, tick):
             #print("True", gpio, level, tick)
             print("緊急モード解除")
             e_mode = False
-            c_pos = 0
+            ###c_pos = 0
+            c_pos = 180
             pi.write(8, 1)
         else:
             #print("False", gpio, level, tick)
             print("緊急モード")
             e_mode = True
-            setPos(0)
+            ####setPos(0)
+            setPos(180)
             pi.write(8, 0)
         l_time = time.time()
 
 cb = pi.callback(17, pigpio.FALLING_EDGE, cb_interrupt)
 
 def setPos(pos):
-    if pos < 130:          # あまり傾けない
+    if pos <= 180:          # あまり傾けない
         val = (2500-500) / 180.0 * pos + 500
         #print(str(pos) + " " + str(val))
         pi.set_servo_pulsewidth(7, val)
