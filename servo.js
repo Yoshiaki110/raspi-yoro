@@ -2,7 +2,6 @@
 
 var common = require('./common.js');
 var config = require('./config.js');
-common.LineMsg(config.BottleId + ' servo.js開始しました');
 
 console.log('bid : ' + config.BottleId);
 var EventHubClient = require('azure-event-hubs').Client;
@@ -45,7 +44,7 @@ var printMessage = function (message) {
 };
 
 function connect() {
-  common.LineMsg('servo.js開始しました');
+  common.LineMsg(config.BottleId +' servo.js開始しました');
   console.log('connect');
     client.open()
         .then(client.getPartitionIds.bind(client))
@@ -65,8 +64,16 @@ var printError = function (err) {
   console.log('Azure Error');
   console.log(err.message);
   common.LineMsg('servo.js Azure Error');
-  process.exit(1);
+  setTimeout(process.exit, 10000, 1);
 };
 
-//connect();
-setTimeout(connect, 10000);
+function prepare() {
+  if (common.IpAddress().length == 0) {
+    setTimeout(prepare, 1000);
+  } else {
+    connect()
+  }
+}
+
+prepare();
+

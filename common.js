@@ -1,7 +1,7 @@
 const os = require('os');
 const request = require('request');
 
-ipAddressStr = function() {
+exports.IpAddress = function() {
     ipv4 = [];
     var interfaces = os.networkInterfaces();
 
@@ -14,7 +14,7 @@ ipAddressStr = function() {
             }
         });
     }
-    return JSON.stringify(ipv4);
+    return ipv4;
 };
 
 exports.LineMsg = function(msg) {
@@ -22,7 +22,7 @@ exports.LineMsg = function(msg) {
         'Content-Type': 'application/json'
     }
     var body = {
-        'msg': msg + '\n' + ipAddressStr()
+        'msg': msg + '\n' + JSON.stringify(exports.IpAddress())
     }
     var url = 'http://yoro.azurewebsites.net/line';
     request({

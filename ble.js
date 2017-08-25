@@ -2,7 +2,7 @@
 
 var common = require('./common.js');
 var config = require('./config.js');
-common.LineMsg(config.BottleId + ' ble.js開始しました');
+//common.LineMsg(config.BottleId + ' ble.js開始しました');
 
 var SensorTag = require('sensortag');
 
@@ -27,7 +27,7 @@ var IoTDevice = (function() {
         if (err) {
           console.log('IoTHubと接続できない: ' + err);
           common.LineMsg('ble.js IoTHubと接続できない');
-          process.exit(1);
+          setTimeout(process.exit, 10000, 1);
         } else {
           console.log('IoTHubと接続完了');
         }
@@ -46,7 +46,7 @@ var IoTDevice = (function() {
         if (err) {
           console.log('IoTHubへの送信エラー: ' + err);
           common.LineMsg('ble.js IoTHubへの送信エラー');
-          process.exit(1);
+          setTimeout(process.exit, 10000, 1);
         } else {
           console.log('IoTHubへの送信完了');
         }
@@ -58,7 +58,8 @@ var IoTDevice = (function() {
   return IoTDevice;
 })();
 
-var device = new IoTDevice(config.HostName, config.DeviceId, config.SharedAccessKey);
+//var device = new IoTDevice(config.HostName, config.DeviceId, config.SharedAccessKey);
+var device;
 
 /*
 * $ npm install sandeepmistry/node-sensortag ## (require `libbluetooth-dev`)
@@ -108,10 +109,24 @@ function setupSensor() {
     });
   });
 }
-setupSensor();
+//setupSensor();
 
 function loop() {        // keep alive
   device.send('dummy', 0);
   setTimeout(loop, 10000);    // hontouha3分ni sitaikedo kidouji-no error wo sugu kenti shitaitame
 }
-setTimeout(loop, 1000);
+//setTimeout(loop, 1000);
+
+function prepare() {
+  if (common.IpAddress().length == 0) {
+    setTimeout(prepare, 1000);
+  } else {
+    device = new IoTDevice(config.HostName, config.DeviceId, config.SharedAccessKey);
+    setupSensor();
+    loop();
+    common.LineMsg(config.BottleId + ' ble.js開始しました');
+  }
+}
+
+prepare();
+
