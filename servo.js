@@ -14,11 +14,11 @@ var g_lastpos = -180;      // 以前の位置
 var g_lasttime = 0;
 
 function setAngle(data) {
-  if (config.Reverse != undefined) {
-    if (config.Reverse) {
-      data = Math.abs(data - 180);
-    }
-  }
+//  if (config.Reverse != undefined) {
+//    if (config.Reverse) {
+//      data = Math.abs(data - 180);
+//    }
+//  }
   if (g_lastpos == data) {
     return;
   }
