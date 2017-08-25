@@ -4,13 +4,25 @@
 ### プログラム
 - ble.js
   - センサ値をクラウドに送信
-  - コマンド「sudo node jle.js」
+  - 開始コマンド「sudo systemctl start yorobled」
+  - 終了コマンド「sudo systemctl stop yorobled」
+  - ログ参照「sudo journalctl -u yorobled」
+  - コンソール起動「sudo node ble.js」（カレントディレクトリを/home/pi/raspi-yoroで実行）
+
 - servo.js
   - クラウドにからセンサ値を受信
-  - コマンド「node servo.js」
+  - 開始コマンド「sudo systemctl start yorosvjsd」
+  - 終了コマンド「sudo systemctl stop yorosvjsd」
+  - ログ参照「sudo journalctl -u yorosvjsd」
+  - コンソール起動「node servo.js」（カレントディレクトリを/home/pi/raspi-yoroで実行）
+
 - servo.py
   - サーボを動かす
-  - コマンド「sudo python servo.py」
+  - 開始コマンド「sudo systemctl start yorosvpyd」
+  - 終了コマンド「sudo systemctl stop yorosvpyd」
+  - ログ参照「sudo journalctl -u yorosvpyd」
+  - コンソール起動「sudo python servo.py」（カレントディレクトリを/home/pi/raspi-yoroで実行）
+
 
 ### 配線
 - 下記３つを使用
@@ -106,6 +118,17 @@
     `sudo pkill -f "sudo node ble.js" ` 
 
 ### TIPS
+- 通信料、通信費
+  - １回のお酌で１５０メッセージ、１本空けるのに、１５００メッセージ
+  - ５１００円／４００万メッセージ＝０．０１２７５円／メッセージ
+  - １５００×０。０１２７５＝１９．１２５円
+
+- 原契約で１日何本できるか
+  - ４００万／１５００メッセージ＝２６６．６６６本
+
+
+
+
 - ネットワークが...
 - BLEが...
 - GPIOが...
