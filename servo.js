@@ -65,7 +65,7 @@ function connect() {
 var printError = function (err) {
   console.log('Azure Error');
   console.log(err.message);
-  common.LineMsg('servo.js Azure Error');
+  common.LineMsg('servo.js Azure Error : ' + err.message);
   setTimeout(process.exit, 10000, 1);
 };
 
