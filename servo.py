@@ -11,6 +11,7 @@ pi = pigpio.pi()
 pi.set_mode(17, pigpio.INPUT)
 pi.set_pull_up_down(17, pigpio.PUD_UP)
 pi.set_mode(8, pigpio.OUTPUT)
+pi.set_mode(9, pigpio.OUTPUT)
 
 init_pos = 0
 if REV:
@@ -19,6 +20,7 @@ d_pos = init_pos
 c_pos = init_pos
 e_mode = False
 l_time = 0
+f_send = False
 
 def cb_interrupt(gpio, level, tick):
     global l_time
@@ -28,13 +30,13 @@ def cb_interrupt(gpio, level, tick):
         if e_mode:
             global c_pos
             #print("True", gpio, level, tick)
-            print("緊急モード解除")
+            print("待機モード解除")
             e_mode = False
             c_pos = init_pos
             pi.write(8, 1)
         else:
             #print("False", gpio, level, tick)
-            print("緊急モード")
+            print("待機モード")
             e_mode = True
             setPos(init_pos)
             pi.write(8, 0)
@@ -50,7 +52,7 @@ def setPos(pos):
         #print(str(pos) + " " + str(val))
         pi.set_servo_pulsewidth(7, val)
 
-class TestThread(threading.Thread):
+class ServoThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.setDaemon(True)
@@ -61,23 +63,42 @@ class TestThread(threading.Thread):
             global c_pos
             global e_mode
             time.sleep(0.02)
-            if e_mode:
+            if e_mode:           # 待機モード
                 pi.write(8, 0)
                 time.sleep(0.5)
                 pi.write(8, 1)
                 time.sleep(0.5)
                 continue
             pi.write(8, 1)
-            if d_pos == c_pos:
+            if d_pos == c_pos:   # 移動しない場合
                 continue
             elif d_pos > c_pos:
                 c_pos += 1
             else:
                 c_pos -= 1
             #print('== read ==', d_pos)
-            setPos(c_pos)
+            setPos(c_pos)        # 移動
 
-th = TestThread()
+sth = ServoThread()
+sth.start()
+
+class StatusThread(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.setDaemon(True)
+ 
+    def run(self):
+        while True:
+            if f_send:      # 一瞬点滅
+                pi.write(9, 0)
+                time.sleep(0.1)
+                pi.write(9, 1)
+                time.sleep(0.1)
+                f_send = False
+                continue
+            time.sleep(0.1)
+
+th = StatusThread()
 th.start()
 
 # 
@@ -90,10 +111,15 @@ while True:
     while line:
         i = i + 1
         try:
-            global d_pos
-            d_pos = int(line[:-1])
-            print('-- read --', d_pos)
+            pos = int(line[:-1])
+            if pos == 200:
+                global f_send
+                f_send = True
+            else:
+                global d_pos
+                d_pos = pos
+                print('-- read --', d_pos)
         except:
-            pass
+            pass        # 数値変換に失敗
         line = f.readline()
     f.close

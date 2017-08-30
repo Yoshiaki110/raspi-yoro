@@ -42,6 +42,12 @@ var printMessage = function (message) {
   console.log(g_lasttime + ' ' + bid + ' - ' + config.BottleId + ' ' + str);
   if (bid == config.ReceiveBottleId) {
     setAngle(parseInt(str));
+  } else if (bid == config.BottleId) {
+    try {
+      fs.writeSync(fd, "200\n");
+    } catch (e) {
+      console.log(e);
+    }
   }
 };
 
