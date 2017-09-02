@@ -62,14 +62,21 @@ class ServoThread(threading.Thread):
             global d_pos
             global c_pos
             global e_mode
-            time.sleep(0.02)
+            global f_send
             if e_mode:           # 待機モード
-                pi.write(8, 0)
+                pi.write(8, 0)   # ゆっくり点滅
                 time.sleep(0.5)
                 pi.write(8, 1)
                 time.sleep(0.5)
                 continue
+
+            if f_send:           # データが来ていたら
+                pi.write(8, 0)   # 一瞬点滅
+                f_send = False
+            time.sleep(0.01)
             pi.write(8, 1)
+            time.sleep(0.01)
+
             if d_pos == c_pos:   # 移動しない場合
                 continue
             elif d_pos > c_pos:
