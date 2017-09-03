@@ -22,6 +22,7 @@ e_mode = False
 l_time = 0
 f_send = False
 
+# ボタンの処理
 def cb_interrupt(gpio, level, tick):
     global l_time
     if time.time() - l_time > 0.3:
@@ -44,6 +45,7 @@ def cb_interrupt(gpio, level, tick):
 
 cb = pi.callback(17, pigpio.FALLING_EDGE, cb_interrupt)
 
+# サーボを動かす
 def setPos(pos):
     if pos >= 50:          # あまり傾けない
         if REV:
@@ -52,6 +54,7 @@ def setPos(pos):
         #print(str(pos) + " " + str(val))
         pi.set_servo_pulsewidth(7, val)
 
+# サーボのメインスレッド
 class ServoThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
@@ -83,7 +86,7 @@ class ServoThread(threading.Thread):
                 c_pos += 1
             else:
                 c_pos -= 1
-            #print('== read ==', d_pos)
+            #print('d', d_pos, 'c', c_pos)
             setPos(c_pos)        # 移動
 
 sth = ServoThread()
@@ -96,10 +99,11 @@ class StatusThread(threading.Thread):
  
     def run(self):
         while True:
+            global f_send
             if f_send:      # 一瞬点滅
-                pi.write(9, 0)
+                pi.write(8, 0)
                 time.sleep(0.1)
-                pi.write(9, 1)
+                pi.write(8, 1)
                 time.sleep(0.1)
                 f_send = False
                 continue

@@ -42,7 +42,8 @@ var printMessage = function (message) {
   console.log(g_lasttime + ' ' + bid + ' - ' + config.BottleId + ' ' + str);
   if (bid == config.ReceiveBottleId) {
     setAngle(parseInt(str));
-  } else if (bid == config.BottleId) {
+  }
+  if (bid == config.BottleId) {
     try {
       fs.writeSync(fd, "200\n");
     } catch (e) {
@@ -75,6 +76,7 @@ var printError = function (err) {
   setTimeout(process.exit, 10000, 1);
 };
 
+// 10秒おきにデータが来ているのを確認、20秒きてなかったら再起動
 function loop() {
   var time = (new Date()).getTime();
   var diff = time - g_lasttime;
@@ -87,6 +89,7 @@ function loop() {
   setTimeout(loop, 10000);
 }
 
+// ネットワークが開始されるのを待って起動
 function prepare() {
   if (common.IpAddress().length == 0) {
     setTimeout(prepare, 1000);
