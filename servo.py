@@ -12,6 +12,7 @@ pi.set_mode(17, pigpio.INPUT)
 pi.set_pull_up_down(17, pigpio.PUD_UP)
 pi.set_mode(8, pigpio.OUTPUT)
 pi.set_mode(9, pigpio.OUTPUT)
+pi.set_mode(10, pigpio.OUTPUT)
 
 init_pos = 0
 if REV:
@@ -134,3 +135,15 @@ while True:
             pass        # 数値変換に失敗
         line = f.readline()
     f.close
+
+
+'''
+200 青LED点滅 BLEのデータ受信中
+201 青LED ON  ble.js起動中
+202 青LED OFF ble.js停止中
+
+300 緑LED点滅 データ受信中
+301 緑LED ON  servo.js起動中
+302 緑LED OFF servo.js停止中
+
+'''
