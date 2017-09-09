@@ -13,6 +13,9 @@ pi.set_pull_up_down(17, pigpio.PUD_UP)
 pi.set_mode(8, pigpio.OUTPUT)
 pi.set_mode(9, pigpio.OUTPUT)
 pi.set_mode(10, pigpio.OUTPUT)
+pi.write(8, 0)      # ALL LED OFF
+pi.write(9, 0)
+pi.write(10, 0)
 
 init_pos = 0
 if REV:
@@ -21,7 +24,6 @@ d_pos = init_pos
 c_pos = init_pos
 e_mode = False
 l_time = 0
-f_send = False
 
 # ボタンの処理
 def cb_interrupt(gpio, level, tick):
@@ -66,7 +68,6 @@ class ServoThread(threading.Thread):
             global d_pos
             global c_pos
             global e_mode
-            global f_send
             if e_mode:           # 待機モード
                 pi.write(8, 0)   # ゆっくり点滅
                 time.sleep(0.5)
@@ -74,12 +75,7 @@ class ServoThread(threading.Thread):
                 time.sleep(0.5)
                 continue
 
-            if f_send:           # データが来ていたら
-                pi.write(8, 0)   # 一瞬点滅
-                f_send = False
-            time.sleep(0.01)
-            pi.write(8, 1)
-            time.sleep(0.01)
+            time.sleep(0.02)
 
             if d_pos == c_pos:   # 移動しない場合
                 continue
@@ -93,44 +89,66 @@ class ServoThread(threading.Thread):
 sth = ServoThread()
 sth.start()
 
-class StatusThread(threading.Thread):
-    def __init__(self):
+class LedThread(threading.Thread):
+    def __init__(self, pin):
         threading.Thread.__init__(self)
         self.setDaemon(True)
+        self.pin = pin
+        self.f = False
  
     def run(self):
         while True:
-            global f_send
-            if f_send:      # 一瞬点滅
-                pi.write(8, 0)
+            if self.f:      # 一瞬点滅
+                pi.write(self.pin, 0)
+                print(self.pin, 'off')
                 time.sleep(0.1)
-                pi.write(8, 1)
+                pi.write(self.pin, 1)
+                print(self.pin, 'on')
                 time.sleep(0.1)
-                f_send = False
+                self.f = False
                 continue
             time.sleep(0.1)
 
-th = StatusThread()
-th.start()
+    def set(self):
+        print('set', self.pin)
+        self.f = True
+
+bleLed = LedThread(9)
+bleLed.start()
+recvLed = LedThread(10)
+recvLed.start()
 
 # 
 while True:
     print('接続待ち')
+    pi.write(8, 0)      # LED OFF
     f = open('fifo')
     print('接続しました')
+    pi.write(8, 1)      # LED ON
     line = f.readline() # 1行を文字列として読み込む(改行文字も含まれる)
     i = 0
     while line:
         i = i + 1
         try:
             pos = int(line[:-1])
+            print('-- read --', pos)
             if pos == 200:
-                global f_send
-                f_send = True
+                bleLed.set()
+            elif pos == 201:
+                pi.write(9, 1)      # LED ON
+            elif pos == 202:
+                pi.write(9, 0)      # LED OFF
+            elif pos == 300:
+                print('recv 300')
+                recvLed.set()
+            elif pos == 301:
+                pi.write(10, 1)     # LED ON
+            elif pos == 302:
+                pi.write(10, 0)     # LED OFF
             else:
                 global d_pos
                 d_pos = pos
-                print('-- read --', d_pos)
+                #print('-- read --', d_pos)
         except:
             pass        # 数値変換に失敗
         line = f.readline()

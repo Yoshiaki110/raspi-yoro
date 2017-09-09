@@ -4,6 +4,21 @@ var common = require('./common.js');
 var config = require('./config.js');
 //common.LineMsg(config.BottleId + ' ble.js開始しました');
 
+var fs = require("fs");
+console.log("servo.pyの接続待ち");
+var fd = fs.openSync("fifo", "w");
+console.log("servo.pyと接続しました");
+
+function setServo(data) {
+  try {
+    fs.writeSync(fd, data);
+  } catch (e) {
+    console.log(e);
+  }
+}
+setServo("202\n");         // LED OFF
+
+
 /*
 フォーマット
 0xFF, id, val(0-180)
@@ -101,6 +116,7 @@ var IoTDevice = (function() {
         if (err) {
           console.log('IoTHubと接続できない: ' + err);
           common.LineMsg('ble.js IoTHubと接続できない');
+          setServo("202\n");         // LED OFF
           setTimeout(process.exit, 10000, 1);
         } else {
           console.log('IoTHubと接続完了');
@@ -120,6 +136,7 @@ var IoTDevice = (function() {
         if (err) {
           console.log('IoTHubへの送信エラー: ' + err);
           common.LineMsg('ble.js IoTHubへの送信エラー');
+          setServo("202\n");         // LED OFF
           setTimeout(process.exit, 10000, 1);
         } else {
           console.log('IoTHubへの送信完了');
@@ -157,6 +174,7 @@ function ti_accelerometer(conned_obj) {
             var val = parseInt(pos);
             if (Math.abs(sended - val) > 1) {        // ほぼ同じ値は送信しない
               device.send(config.BottleId, val);
+              setServo("200\n");         // LED 点滅
               var d = new Buffer(3);
               d[0] = 255;
               d[1] = config.distID;
@@ -180,12 +198,14 @@ function setupSensor() {
     sensorTag.connectAndSetup(function() {
       sensorTag.readDeviceName(function(error, deviceName) {
         console.info("CC2650と接続しました: " + deviceName);
+        setServo("201\n");         // LED ON
         ti_accelerometer(sensorTag);
       });
     });
     /* In case of SensorTag PowerOff or out of range when fired `onDisconnect` */
     sensorTag.on("disconnect", function() {
       console.info("CC2650との接続解除 id:", sensorTag.id);
+      setServo("202\n");         // LED OFF
       //process.exit(1);
       setupSensor();
     });

@@ -10,24 +10,24 @@ console.log("servo.pyの接続待ち");
 var fd = fs.openSync("fifo", "w");
 console.log("servo.pyと接続しました");
 
+function setServo(data) {
+  try {
+    fs.writeSync(fd, data);
+  } catch (e) {
+    console.log(e);
+  }
+}
+setServo("302\n");         // LED OFF
+
 var g_lastpos = -180;      // 以前の位置
 var g_lasttime = 0;
 
 function setAngle(data) {
-//  if (config.Reverse != undefined) {
-//    if (config.Reverse) {
-//      data = Math.abs(data - 180);
-//    }
-//  }
   if (g_lastpos == data) {
     return;
   }
   console.log(data);
-  try {
-    fs.writeSync(fd, data + "\n");
-  } catch (e) {
-    console.log(e);
-  }
+  setServo(data + "\n");
   g_lastpos = data;
 }
 
@@ -42,19 +42,21 @@ var printMessage = function (message) {
   console.log(g_lasttime + ' ' + bid + ' - ' + config.BottleId + ' ' + str);
   if (bid == config.ReceiveBottleId) {
     setAngle(parseInt(str));
+    setServo("300\n");
   }
-  if (bid == config.BottleId) {
-    try {
-      fs.writeSync(fd, "200\n");
-    } catch (e) {
-      console.log(e);
-    }
-  }
+//  if (bid == config.BottleId) {
+//    try {
+//      fs.writeSync(fd, "200\n");
+//    } catch (e) {
+//      console.log(e);
+//    }
+//  }
 };
 
 function connect() {
   common.LineMsg(config.BottleId +' servo.js開始しました');
   console.log('connect');
+  setServo("301\n");         // LED ON
     client.open()
         .then(client.getPartitionIds.bind(client))
         .then(function (partitionIds) {
@@ -73,6 +75,7 @@ var printError = function (err) {
   console.log('Azure Error');
   console.log(err.message);
   common.LineMsg('servo.js Azure Error : ' + err.message);
+  setServo("302\n");         // LED OFF
   setTimeout(process.exit, 10000, 1);
 };
 
@@ -84,6 +87,7 @@ function loop() {
   if (diff > 20000) {
     console.log('not comming heart beat');
     common.LineMsg('servo.js not comming heart beat');
+    setServo("302\n");         // LED OFF
     setTimeout(process.exit, 10000, 1);
   }
   setTimeout(loop, 10000);
