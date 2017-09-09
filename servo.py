@@ -17,9 +17,10 @@ pi.write(8, 0)      # ALL LED OFF
 pi.write(9, 0)
 pi.write(10, 0)
 
-init_pos = 0
-if REV:
-    init_pos = 180
+init_pos = 180
+#init_pos = 0
+#if REV:
+#    init_pos = 180
 d_pos = init_pos 
 c_pos = init_pos
 e_mode = False
