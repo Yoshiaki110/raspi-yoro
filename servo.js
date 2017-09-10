@@ -40,9 +40,9 @@ var printMessage = function (message) {
   var bid = message.body.bid;
   g_lasttime = (new Date()).getTime();
   console.log(g_lasttime + ' ' + bid + ' - ' + config.BottleId + ' ' + str);
+  setServo("300\n");
   if (bid == config.ReceiveBottleId) {
     setAngle(parseInt(str));
-    setServo("300\n");
   }
 //  if (bid == config.BottleId) {
 //    try {
