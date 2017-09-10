@@ -17,10 +17,9 @@ pi.write(8, 0)      # ALL LED OFF
 pi.write(9, 0)
 pi.write(10, 0)
 
-init_pos = 180
-#init_pos = 0
-#if REV:
-#    init_pos = 180
+init_pos = 0
+if REV:
+    init_pos = 180
 d_pos = init_pos 
 c_pos = init_pos
 e_mode = False
@@ -35,14 +34,16 @@ def cb_interrupt(gpio, level, tick):
         if e_mode:
             global c_pos
             #print("True", gpio, level, tick)
-            print("待機モード解除")
+            print("待機モード解除", init_pos)
             e_mode = False
             c_pos = init_pos
             pi.write(8, 1)
         else:
             #print("False", gpio, level, tick)
-            print("待機モード")
+            print("待機モード", init_pos)
             e_mode = True
+            setPos(init_pos)
+            time.sleep(0.3)
             setPos(init_pos)
             pi.write(8, 0)
         l_time = time.time()
