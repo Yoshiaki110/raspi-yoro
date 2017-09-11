@@ -26,8 +26,10 @@
 
 ### 配線
 - 下記３つを使用
-  - 17 スイッチ
-  - 8  LED
+  - 17 待機スイッチ
+  - 10  LED 受信確認用
+  - 9  LED BLE接続確認用
+  - 8  LED(待機スイッチの)
   - 7  サーボ
 - 「gpio readall」でピンアサインが見れる
 
@@ -103,7 +105,23 @@
 
 
 ### 設定ファイル(config.js)
-- 
+- exports.HostName
+    - Azure IoTHubのHostName
+- exports.DeviceId
+    - Azure IoTHubのDeviceId
+- exports.SharedAccessKey
+    - Azure IoTHubのSharedAccessKey
+- exports.BottleId
+    - 自分のID
+- exports.ConnectString
+    - Azure IoTHubのConnectString
+- exports.ReceiveBottleId
+    - 受信するID
+
+### 設定ファイル(config.py)
+- REV
+    - True 左利き用
+    - False 右利き用
 
 
 ### デバッグ

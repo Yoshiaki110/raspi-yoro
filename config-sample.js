@@ -2,7 +2,7 @@
 exports.HostName = '';
 exports.DeviceId = '';
 exports.SharedAccessKey = '';
-exports.BottleId = '';         // ID
+exports.BottleId = '';         // 自分のID
 
 
 // 受信(SERVO)側
