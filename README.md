@@ -118,6 +118,17 @@
 - exports.ReceiveBottleId
     - 受信するID
 
+### １台モードにする場合
+- スマホのテザリングをONにする
+- ラズパイの電源を入れる
+- sshクライアントでラズパイとつなげる   
+多分アドレスは「192.168.43.174」か「192.168.43.184」のはず
+- sudo nano raspi-yoro/config.js で定義ファイルを編集する   
+「exports.BottleId」「exports.ReceiveBottleId」が今は別々の値（'a'と'b'）になっているが同じ値にする
+- 「ctrl」を押しながら「x」を押すとファイル変更するかと聞かれるので「Y」を押す
+- ファイル名を確認するメッセージが出るのでそのまま「Enter」
+- 「sudo reboot」と入力すると、ラズパイが再起動して１台モードになります
+
 ### 設定ファイル(config.py)
 - REV
     - True 左利き用
@@ -133,7 +144,7 @@
     sudo pkill -f "sudo python servo.py"  
 
     - 全プログラムの停止  
-    `sudo pkill -f "sudo node ble.js" ` 
+    `sudo pkill -f "sudo node ble.js" `
 
 ### TIPS
 - 通信料、通信費
@@ -176,6 +187,3 @@ Macは何も考えずにraspberrypi.localで接続できる
 無線でVNCで入って、ifconfig、LANケーブルさしてifconfig
 -----
 arp -s 169.254.0.xxx   b8-27-eb-62-c6-09
-
-
-
