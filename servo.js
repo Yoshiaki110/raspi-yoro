@@ -54,7 +54,7 @@ var printMessage = function (message) {
 };
 
 function connect() {
-  common.LineMsg(config.BottleId +' servo.js開始しました');
+  common.LineMsg('servo.js開始しました');
   console.log('connect');
   setServo("301\n");         // LED ON
     client.open()

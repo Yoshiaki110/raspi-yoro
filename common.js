@@ -1,4 +1,5 @@
 const os = require('os');
+var config = require('./config.js');
 const request = require('request');
 
 exports.IpAddress = function() {
@@ -22,7 +23,7 @@ exports.LineMsg = function(msg) {
         'Content-Type': 'application/json'
     }
     var body = {
-        'msg': msg + '\n' + JSON.stringify(exports.IpAddress())
+        'msg': config.BottleId + ' ' + msg + '\n' + JSON.stringify(exports.IpAddress())
     }
     var url = 'http://yoro.azurewebsites.net/line';
     request({

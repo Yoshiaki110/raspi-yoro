@@ -2,7 +2,7 @@
 
 var common = require('./common.js');
 var config = require('./config.js');
-//common.LineMsg(config.BottleId + ' ble.js開始しました');
+//common.LineMsg('ble.js開始しました');
 
 var fs = require("fs");
 console.log("servo.pyの接続待ち");
@@ -226,7 +226,7 @@ function prepare() {
     device = new IoTDevice(config.HostName, config.DeviceId, config.SharedAccessKey);
     setupSensor();
     loop();
-    common.LineMsg(config.BottleId + ' ble.js開始しました');
+    common.LineMsg('ble.js開始しました');
   }
 }
 
