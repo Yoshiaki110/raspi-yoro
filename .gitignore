@@ -63,4 +63,5 @@ typings/
 # secret file
 config.js
 config.py
+setting.properties
 

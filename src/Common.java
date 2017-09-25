@@ -67,6 +67,16 @@ public class Common {
 		}
 	}
 
+	static public int getInt(String key) {
+		int ret = 0;
+		try {
+			ret = Integer.parseInt(__rb.getString(key));
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+		return ret;
+	}
+/*
 	static public int getId() {
 		int ret = 0;
 		try {
@@ -75,5 +85,5 @@ public class Common {
 			e.printStackTrace();
 		}
 		return ret;
-	}
+	}*/
 }

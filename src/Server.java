@@ -12,7 +12,6 @@ class Server extends Thread {
 		//Common.ip();
 		//Common.line("aaa1234あいうえお");
 		//Common.line("aaa1234");
-		int id = Common.getId();
 		ServerSocket ss = null;
 		try {
 			ss = new ServerSocket(Common.PORT);
@@ -71,7 +70,7 @@ class Server extends Thread {
 					//if (os != tos) {
 						tos.write(255);
 						tos.write(id);
-						tos.write(data + 1);
+						tos.write(data);
 					//}
 				}
 			}
