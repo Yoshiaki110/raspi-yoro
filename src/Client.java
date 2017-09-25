@@ -48,7 +48,7 @@ class Client extends Thread {
 			BufferedReader br = null;
 			try {
 				os = s.getOutputStream();
-				File file = new File("sfifo");
+				File file = new File("../sfifo");
 				br = new BufferedReader(new FileReader(file));
 				String str;
 				while (true) {
@@ -61,6 +61,7 @@ class Client extends Thread {
 							br = new BufferedReader(new FileReader(file));
 						}
 					}
+//					System.out.println("### " + str);
 					os.write(255);		// デリミタ
 					os.write(ID);		// ID
 					os.write(Integer.parseInt(str));
@@ -101,7 +102,7 @@ class Client extends Thread {
 		BufferedWriter bw = null;
 		try {
 			is = _s.getInputStream();
-			File file = new File("fifo");
+			File file = new File("../fifo");
 			bw = new BufferedWriter(new FileWriter(file));
 			while (true) {
 				int delimiter = is.read();
@@ -123,9 +124,12 @@ class Client extends Thread {
 					Common.println("illegal format(3) " + _s.getRemoteSocketAddress() + " " + _s.getLocalSocketAddress());
 					break;
 				}
-				System.out.println(delimiter + " " + id + "=" + RECEIVE_ID + " " + data + "  >>" + String.valueOf(data));
+				System.out.println(delimiter + " " + id + "=" + RECEIVE_ID + " " + data);
 				if (id == RECEIVE_ID) {
-					bw.write(String.valueOf(data) + "\n");
+					String s = String.valueOf(data) + "\n";
+					System.out.println("  >>" + s + "<<");
+					bw.write(s);
+					bw.flush();
 				}
 			}
 		} catch (Exception e) {
