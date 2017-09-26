@@ -12,6 +12,7 @@ class Client extends Thread {
 	private static String HOST = "csoft-iot.cloudapp.net";
 	private static int ID = Common.getInt("id");
 	private static int RECEIVE_ID = Common.getInt("receiveId");
+	private static BufferedWriter BW = null;
 	private Socket _s = null;
 
 	public static void main(String args[]) {
@@ -19,6 +20,14 @@ class Client extends Thread {
 //		read();
 		if (args.length != 0) {
 			ID = Integer.parseInt(args[0]);
+		}
+		try {
+			File file = new File("../fifo");
+			BW = new BufferedWriter(new FileWriter(file));
+			BW.write("301\n");				// LED ON
+			BW.flush();
+		} catch(Exception e) {
+			Common.println("Exception at bw.close: " + e);
 		}
 		while (true) {
 			client();
@@ -28,6 +37,12 @@ class Client extends Thread {
 				e.printStackTrace();
 			}
 		}
+//		try {
+//			if (BW != null)
+//				BW.close();
+//		} catch(Exception e) {
+//			Common.println("Exception at bw.close: " + e);
+//		}
 	}
 
 	/*
@@ -99,11 +114,8 @@ class Client extends Thread {
 	}
 	public void run() {
 		InputStream is = null;
-		BufferedWriter bw = null;
 		try {
 			is = _s.getInputStream();
-			File file = new File("../fifo");
-			bw = new BufferedWriter(new FileWriter(file));
 			while (true) {
 				int delimiter = is.read();
 				if (delimiter == -1) {
@@ -125,22 +137,15 @@ class Client extends Thread {
 					break;
 				}
 				System.out.println(delimiter + " " + id + "=" + RECEIVE_ID + " " + data);
+				BW.write("300\n");
 				if (id == RECEIVE_ID) {
-					String s = String.valueOf(data) + "\n";
-					System.out.println("  >>" + s + "<<");
-					bw.write(s);
-					bw.flush();
+					BW.write(String.valueOf(data) + "\n");
 				}
+				BW.flush();
 			}
 		} catch (Exception e) {
 			Common.println("Exception in receive thread: " + e);
 			Common.println(_s.getRemoteSocketAddress() + " " + _s.getLocalSocketAddress());
-		}
-		try {
-			if (bw != null)
-				bw.close();
-		} catch(Exception e) {
-			Common.println("Exception at bw.close: " + e);
 		}
 		try {
 			if (is != null)
