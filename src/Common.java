@@ -15,23 +15,27 @@ public class Common {
 	private static ResourceBundle __rb = ResourceBundle.getBundle("setting");
 
 	public static void println(String str) {
-		System.out.println((new Date()).toString() + " " + str);
+		System.out.println((new Date()).toString() + " " + str + " " + ip());
 	}
 
-	public static void ip() {
+	public static String ip() {
+		String ret = "?.?.?.?";
 		try {
+			StringBuffer sb = new StringBuffer();
 			for(NetworkInterface n: Collections.list(NetworkInterface.getNetworkInterfaces()) ) {
 				//System.out.println("" + n);
 				for (InetAddress addr : Collections.list(n.getInetAddresses()))  {
 					if( addr instanceof Inet4Address && !addr.isLoopbackAddress() ){
 						//System.out.println(addr.getHostAddress());
-						System.out.println(addr + " : " + n.getName() + " : " + n.getDisplayName());
+						sb.append(addr + ":" + n.getName() + ":" + n.getDisplayName() + "/");
 					}
 				}
 			}
+			ret = sb.toString();
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
+		return ret;
 	}
 
 	public static void line(String msg) {

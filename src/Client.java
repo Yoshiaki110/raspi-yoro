@@ -22,6 +22,10 @@ class Client extends Thread {
 			ID = Integer.parseInt(args[0]);
 		}
 		try {
+			for (int i = 0; i < 10; i++) {
+				System.out.println( i + " " + Common.ip());
+				Thread.sleep(1000);
+			}
 			File file = new File("../fifo");
 			BW = new BufferedWriter(new FileWriter(file));
 			BW.write("301\n");				// LED ON
