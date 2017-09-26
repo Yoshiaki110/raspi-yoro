@@ -22,19 +22,28 @@ class Client extends Thread {
 			ID = Integer.parseInt(args[0]);
 		}
 		try {
-			for (int i = 0; i < 10; i++) {
-				System.out.println( i + " " + Common.ip());
-				Thread.sleep(1000);
-			}
 			File file = new File("../fifo");
 			BW = new BufferedWriter(new FileWriter(file));
-			BW.write("301\n");				// LED ON
-			BW.flush();
+			for (int i = 0; i < 300; i++) {
+				write("301");				// LED ON
+				Thread.sleep(500);
+				write("302");				// LED OFF
+				Thread.sleep(500);
+				String ip = Common.ip();
+				if (ip.length() == 0)
+					continue;
+				if (ip.startsWith("168") || ip.startsWith("/168")) {
+					continue;
+				}
+				break;
+			}
 		} catch(Exception e) {
 			Common.println("Exception at bw.close: " + e);
 		}
 		while (true) {
+			write("301");				// LED ON
 			client();
+			write("302");				// LED OFF
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
@@ -59,6 +68,7 @@ class Client extends Thread {
 			Common.println(s.getRemoteSocketAddress() + " " + s.getLocalSocketAddress());
 		} catch (Exception e) {
 			Common.println("Exception: " + e);
+			Common.line("Exception: " + e);
 		}
 		if (s != null) {
 			Thread t = new Client(s);
@@ -141,11 +151,10 @@ class Client extends Thread {
 					break;
 				}
 				System.out.println(delimiter + " " + id + "=" + RECEIVE_ID + " " + data);
-				BW.write("300\n");
+				write("300");
 				if (id == RECEIVE_ID) {
-					BW.write(String.valueOf(data) + "\n");
+					write(String.valueOf(data));
 				}
-				BW.flush();
 			}
 		} catch (Exception e) {
 			Common.println("Exception in receive thread: " + e);
@@ -180,6 +189,15 @@ class Client extends Thread {
 			bw.write(str + "\n");
 			bw.write(str2 + "\n");
 			bw.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
+
+	public static void write(String str){
+		try {
+			BW.write(str + "\n");
+			BW.flush();
 		} catch (Exception e) {
 			System.out.println(e);
 		}

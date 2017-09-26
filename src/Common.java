@@ -18,15 +18,16 @@ public class Common {
 		System.out.println((new Date()).toString() + " " + str + " " + ip());
 	}
 
+	/*
+	 * IPアドレスを返す
+	 */
 	public static String ip() {
-		String ret = "?.?.?.?";
+		String ret = "";
 		try {
 			StringBuffer sb = new StringBuffer();
 			for(NetworkInterface n: Collections.list(NetworkInterface.getNetworkInterfaces()) ) {
-				//System.out.println("" + n);
 				for (InetAddress addr : Collections.list(n.getInetAddresses()))  {
 					if( addr instanceof Inet4Address && !addr.isLoopbackAddress() ){
-						//System.out.println(addr.getHostAddress());
 						sb.append(addr + ":" + n.getName() + ":" + n.getDisplayName() + "/");
 					}
 				}
@@ -40,7 +41,7 @@ public class Common {
 
 	public static void line(String msg) {
 		final String EOL = "\r\n";
-		String content = "{\"msg\":\"" + msg + "\"}";
+		String content = "{\"msg\":\"" + msg + " " + ip() + "\"}";
 		try {
 			Socket s = new Socket("yoro.azurewebsites.net", 80);
 			OutputStream os = s.getOutputStream();
