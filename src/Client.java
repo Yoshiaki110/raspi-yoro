@@ -86,9 +86,6 @@ class Client extends Thread {
 					while (true) {
 //						str = br.readLine();
 						str = BR.readLine();
-						if (str.length()==0) {
-							Common.line("Java テスト");
-						}
 						if (str != null) {
 							break;
 						} else {
@@ -96,6 +93,9 @@ class Client extends Thread {
 //							br = new BufferedReader(new FileReader(file));
 							Thread.sleep(300);
 						}
+					}
+					if (str.length()==0) {
+						Common.line("Java テスト");
 					}
 //					System.out.println("### " + str);
 					os.write(255);		// デリミタ
@@ -107,12 +107,12 @@ class Client extends Thread {
 				Common.println("Exception in send thread: " + e);
 				Common.println(s.getRemoteSocketAddress() + " " + s.getLocalSocketAddress());
 			}
-			try {
-				if (br != null)
-					br.close();
-			} catch(Exception e) {
-				Common.println("Exception at br.close: " + e);
-			}
+//			try {
+//				if (br != null)
+//					br.close();
+//			} catch(Exception e) {
+//				Common.println("Exception at br.close: " + e);
+//			}
 			try {
 				if (os != null)
 					os.close();
