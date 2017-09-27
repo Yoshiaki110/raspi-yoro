@@ -62,6 +62,7 @@ class Client extends Thread {
 	 * メインスレッド（送信）
 	 */
 	public static void client() {
+		Common.line("Java 開始");
 		Socket s = null;
 		try {
 			s = new Socket(HOST, Common.PORT);
@@ -94,6 +95,7 @@ class Client extends Thread {
 					os.write(255);		// デリミタ
 					os.write(ID);		// ID
 					os.write(Integer.parseInt(str));
+					os.flush();
 				}
 			} catch (Exception e) {
 				Common.println("Exception in send thread: " + e);
