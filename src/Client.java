@@ -67,7 +67,7 @@ class Client extends Thread {
 		Socket s = null;
 		try {
 			s = new Socket(HOST, Common.PORT);
-			Common.println(s.getRemoteSocketAddress() + " " + s.getLocalSocketAddress());
+			Common.println("Connected " + s.getRemoteSocketAddress() + " " + s.getLocalSocketAddress());
 		} catch (Exception e) {
 			Common.println("Exception: " + e);
 			Common.line("Exception: " + e);
@@ -84,8 +84,10 @@ class Client extends Thread {
 				String str;
 				while (true) {
 					while (true) {
+						Common.println("fifo");
 //						str = br.readLine();
 						str = BR.readLine();
+						Common.println("fifo:" + str);
 						if (str != null) {
 							break;
 						} else {
@@ -136,6 +138,7 @@ class Client extends Thread {
 		setName("client");
 	}
 	public void run() {
+		Common.println("receive thread started ");
 		InputStream is = null;
 		try {
 			is = _s.getInputStream();
