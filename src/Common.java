@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -39,10 +40,13 @@ public class Common {
 		return ret;
 	}
 
+	/*
+	 * TODO msgに漢字を使えるように、今はBadRequestになる場合あり
+	 */
 	public static void line(String msg) {
 		final String EOL = "\r\n";
-		String content = "{\"msg\":\"" + msg + " " + ip() + "\"}";
 		try {
+			String content = "{\"msg\":\"" + URLEncoder.encode(msg, "UTF-8") + " " + ip() + "\"}";
 			Socket s = new Socket("yoro.azurewebsites.net", 80);
 			OutputStream os = s.getOutputStream();
 			OutputStreamWriter osw = new OutputStreamWriter(os);
