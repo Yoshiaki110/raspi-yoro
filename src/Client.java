@@ -12,6 +12,7 @@ class Client extends Thread {
 	private static String HOST = "csoft-iot.cloudapp.net";
 	private static int ID = Common.getInt("id");
 	private static int RECEIVE_ID = Common.getInt("receiveId");
+	private static BufferedReader BR = null;
 	private static BufferedWriter BW = null;
 	private Socket _s = null;
 
@@ -22,8 +23,8 @@ class Client extends Thread {
 			ID = Integer.parseInt(args[0]);
 		}
 		try {
-			File file = new File("../fifo");
-			BW = new BufferedWriter(new FileWriter(file));
+			BR = new BufferedReader(new FileReader(new File("../sfifo")));
+			BW = new BufferedWriter(new FileWriter(new File("../fifo")));
 			for (int i = 0; i < 300; i++) {
 				write("301");				// LED ON
 				Thread.sleep(500);
@@ -38,7 +39,7 @@ class Client extends Thread {
 				break;
 			}
 		} catch(Exception e) {
-			Common.println("Exception at bw.close: " + e);
+			Common.println("Exception at main: " + e);
 		}
 		while (true) {
 			write("301");				// LED ON
@@ -75,20 +76,25 @@ class Client extends Thread {
 			Thread t = new Client(s);
 			t.start();
 			OutputStream os = null;
-			BufferedReader br = null;
+//			BufferedReader br = null;
 			try {
 				os = s.getOutputStream();
-				File file = new File("../sfifo");
-				br = new BufferedReader(new FileReader(file));
+//				File file = new File("../sfifo");
+//				br = new BufferedReader(new FileReader(file));
 				String str;
 				while (true) {
 					while (true) {
-						str = br.readLine();
+//						str = br.readLine();
+						str = BR.readLine();
+						if (str.length()==0) {
+							Common.line("Java テスト");
+						}
 						if (str != null) {
 							break;
 						} else {
-							br.close();
-							br = new BufferedReader(new FileReader(file));
+//							br.close();
+//							br = new BufferedReader(new FileReader(file));
+							Thread.sleep(300);
 						}
 					}
 //					System.out.println("### " + str);
@@ -127,6 +133,7 @@ class Client extends Thread {
 	 */
 	Client(Socket s) {
 		_s = s;
+		setName("client");
 	}
 	public void run() {
 		InputStream is = null;
