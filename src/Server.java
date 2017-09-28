@@ -18,6 +18,7 @@ class Server extends Thread {
 
 			while (true) {
 				Socket s = ss.accept();
+				s.setTcpNoDelay(true);
 				Thread t = new Server(s);
 				t.start();
 			}

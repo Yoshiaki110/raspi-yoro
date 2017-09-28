@@ -67,6 +67,7 @@ class Client extends Thread {
 		Socket s = null;
 		try {
 			s = new Socket(HOST, Common.PORT);
+			s.setTcpNoDelay(true);
 			Common.println("Connected " + s.getRemoteSocketAddress() + " " + s.getLocalSocketAddress());
 		} catch (Exception e) {
 			Common.println("Exception: " + e);
