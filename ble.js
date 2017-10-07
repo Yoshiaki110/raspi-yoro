@@ -11,6 +11,7 @@ console.log("servo.pyと接続しました");
 function setServo(data) {
   try {
     fs.writeSync(fd, data);
+//    console.log('@@@@' + data);
   } catch (e) {
     console.log(e);
   }
@@ -22,7 +23,7 @@ function setAngle(data) {
   if (g_lastpos == data) {
     return;
   }
-  console.log(data);
+//  console.log(data);
   setServo(data + "\n");
   g_lastpos = data;
 }
@@ -66,7 +67,9 @@ function connect() {
             if (p >= 0) {                      // 正しいデータあり
                 if (data[p+1] == RID) {        // 自分宛てのデータ
                     console.log('* receive id:' + data[p+1] + ' val:' + data[p+2] + ' len:' + data.length);
-                    setAngle(data[p+2]);
+                    if (data[p+2] <= 180) {    // 
+                        setAngle(data[p+2]);
+                    }
                 } else {
                     console.log('  receive id:' + data[p+1] + ' val:' + data[p+2] + ' len:' + data.length);
                 }
@@ -104,7 +107,7 @@ function connect() {
 
 function keepalive() {
     var dt = new Date() - watchdog;
-    console.log('watchdog:' + dt);
+//    console.log('watchdog:' + dt);
     if (dt > 5000) {
         setServo("302\n");         // LED OFF
         setServo("202\n");         // LED OFF
@@ -118,7 +121,7 @@ function keepalive() {
     d[0] = 255;
     d[1] = ID;
     d[2] = 200;
-    console.log('send keepalive:' + 200);
+//    console.log('send keepalive:' + 200);
     global.sock.write(d);
     setTimeout(keepalive, 2000);
 }
