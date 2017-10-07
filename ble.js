@@ -2,7 +2,6 @@
 
 var common = require('./common.js');
 var config = require('./config.js');
-//common.LineMsg('ble.js開始しました');
 
 var fs = require("fs");
 console.log("servo.pyの接続待ち");
@@ -16,24 +15,133 @@ function setServo(data) {
     console.log(e);
   }
 }
+var g_lastpos = -180;      // 以前の位置
+var g_lasttime = 0;
+
+function setAngle(data) {
+  if (g_lastpos == data) {
+    return;
+  }
+  console.log(data);
+  setServo(data + "\n");
+  g_lastpos = data;
+}
+setServo("301\n");         // LED ON
 setServo("202\n");         // LED OFF
 
-console.log("javaの接続待ち");
-var fdj = fs.openSync("sfifo", "w");
-console.log("javaと接続しました");
+
+var net = require('net');
+var HOST = config.HOST;
+var PORT = 80;
+var ID = config.ID;
+var RID = config.RID;
+console.log('myID: ' + ID + ' recvID: ' + RID);
+
+global.sock = null;
+global.watchdog = new Date();
+
+function connect() {
+    global.sock = new net.Socket();
+    global.sock.setNoDelay();
+    global.sock.connect(PORT, HOST, function() {
+        console.log('CONNECTED TO: ' + HOST + ':' + PORT);
+    });
+
+    global.sock.on('connect', function() {
+        console.log('EVENT connect');
+    });
+
+    global.sock.on('data', function(data) {
+        setServo("300\n");         // LED 点滅
+        global.watchdog = new Date();
+
+        if (data.length >= 3) {    // ３バイト以上のデータのみ使用
+            var p = -1;
+            for (var i = data.length - 2; i--; ) {
+//                console.log(data[i]);
+                if (data[i] == 255) {
+                    p = i;
+                }
+            }
+            if (p >= 0) {                      // 正しいデータあり
+                if (data[p+1] == RID) {        // 自分宛てのデータ
+                    console.log('* receive id:' + data[p+1] + ' val:' + data[p+2] + ' len:' + data.length);
+                    setAngle(data[p+2]);
+                } else {
+                    console.log('  receive id:' + data[p+1] + ' val:' + data[p+2] + ' len:' + data.length);
+                }
+            } else {
+                console.log('receive not found separater. data len:' + data.length);
+            }
+        } else {
+            console.log('receive illegal data len:' + data.length);
+        }
+    });
+
+    global.sock.on('end', function() {
+        console.log('EVENT end');
+    });
+
+    global.sock.on('timeout', function() {
+        console.log('EVENT timeout');
+    });
+
+    global.sock.on('drain', function() {
+        console.log('EVENT drain');
+    });
+
+    global.sock.on('error', function(error) {
+        console.log('EVENT error:' + error);
+        global.sock.destroy();
+        global.sock = null;
+    });
+
+    global.sock.on('close', function(had_error) {
+        console.log('EVENT close:' + had_error);
+        global.sock = null;
+    });
+}
+
+function keepalive() {
+    var dt = new Date() - watchdog;
+    console.log('watchdog:' + dt);
+    if (dt > 5000) {
+        setServo("302\n");         // LED OFF
+        setServo("202\n");         // LED OFF
+        process.exit(1)
+    }
+
+    if (null == global.sock) {
+        connect();
+    }
+    var d = new Buffer(3);
+    d[0] = 255;
+    d[1] = ID;
+    d[2] = 200;
+    console.log('send keepalive:' + 200);
+    global.sock.write(d);
+    setTimeout(keepalive, 2000);
+}
 
 function send(data) {
-  try {
-    fs.writeSync(fdj, data + '\n');
-  } catch (e) {
-    console.log(e);
-  }
+    if (null == global.sock) {
+        connect();
+    }
+    //d = String.fromCharCode(rand);      // 1バイトの文字列（コード）にする
+    var d = new Buffer(3);
+    d[0] = 255;
+    d[1] = ID;
+    d[2] = data;
+    //console.log('send:' + d);
+    console.log('send:' + data);
+    global.sock.write(d);
 }
+
+
 
 var SensorTag = require('sensortag');
 
 var sended = -1000;
-//var device;
 
 /*
 * $ npm install sandeepmistry/node-sensortag ## (require `libbluetooth-dev`)
@@ -91,6 +199,8 @@ function prepare() {
   if (common.IpAddress().length == 0) {
     setTimeout(prepare, 1000);
   } else {
+    connect();
+    keepalive();
     setupSensor();
     common.LineMsg('ble.js開始しました');
   }
