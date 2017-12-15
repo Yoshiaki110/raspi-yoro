@@ -23,7 +23,7 @@ exports.LineMsg = function(msg) {
         'Content-Type': 'application/json'
     }
     var body = {
-        'msg': config.BottleId + ' ' + msg + '\n' + JSON.stringify(exports.IpAddress())
+        'msg': config.ID + '-' + config.RID + ' ' + msg + '\n' + JSON.stringify(exports.IpAddress())
     }
     var url = 'http://yoro.azurewebsites.net/line';
     request({
