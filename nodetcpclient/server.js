@@ -1,16 +1,16 @@
 /*
-ƒtƒH[ƒ}ƒbƒg
+ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
 0xFF, id, val(0-180)
 */
 var net = require('net');
 var HOST = 'localhost';
 var PORT = 12345;
 
-global.socks = new Array();     // Ú‘±‚µ‚Ä‚¢‚éƒ\ƒPƒbƒg
+global.socks = new Array();     // æ¥ç¶šã—ã¦ã„ã‚‹ã‚½ã‚±ãƒƒãƒˆ
 
 function write(sock, data) {
     for (var i = global.socks.length; i--; ) {
-        //if (global.socks[i] != sock) {     // ©•ªˆÈŠO‚É‘—MAƒGƒR[ƒoƒbƒN‚ÍóM‚µ‚½ƒNƒ‰ƒCƒAƒ“ƒg‚ªs‚¤
+        //if (global.socks[i] != sock) {     // è‡ªåˆ†ä»¥å¤–ã«é€ä¿¡ã€ã‚¨ã‚³ãƒ¼ãƒãƒƒã‚¯ã¯å—ä¿¡ã—ãŸã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆãŒè¡Œã†
             global.socks[i].write(data);
         //}
     }
@@ -19,7 +19,7 @@ function write(sock, data) {
 function errorsock(sock) {
     console.log
     for (var i = global.socks.length; i--; ) {
-        if (global.socks[i] === sock) {  // ŠY“–‚Ìƒ\ƒPƒbƒg‚ğíœ
+        if (global.socks[i] === sock) {  // è©²å½“ã®ã‚½ã‚±ãƒƒãƒˆã‚’å‰Šé™¤
             global.socks.splice(i, 1);
         }
     }
@@ -33,8 +33,8 @@ server = net.createServer(function(sock) {
         console.log('EVENT connect');
     });
 
-    sock.on('data', function(data) {             // ‚PƒoƒCƒg‚Ã‚Â—ˆ‚é‚Æ‚ÍŒÀ‚ç‚È‚¢
-        if (data.length >= 3) {    // ‚RƒoƒCƒgˆÈã‚Ìƒf[ƒ^‚Ì‚İg—p
+    sock.on('data', function(data) {             // ï¼‘ãƒã‚¤ãƒˆã¥ã¤æ¥ã‚‹ã¨ã¯é™ã‚‰ãªã„
+        if (data.length >= 3) {    // ï¼“ãƒã‚¤ãƒˆä»¥ä¸Šã®ãƒ‡ãƒ¼ã‚¿ã®ã¿ä½¿ç”¨
             var p = -1;
             for (var i = data.length - 2; i--; ) {
 //                console.log(data[i]);
@@ -42,15 +42,15 @@ server = net.createServer(function(sock) {
                     p = i;
                 }
             }
-            if (p >= 0) {         // ³‚µ‚¢ƒf[ƒ^‚ ‚è
+            if (p >= 0) {         // æ­£ã—ã„ãƒ‡ãƒ¼ã‚¿ã‚ã‚Š
                 console.log('id:' + data[p+1] + ' val:' + data[p+2] + ' len:' + data.length);
                 d = new Buffer(3);
                 d[0] = 255;
                 d[1] = data[p+1];
                 d[2] = data[p+2];
-                if (data[p+2] == 200) {    // ƒL[ƒvƒAƒ‰ƒCƒu‚È‚ç‘—M‘¤‚Ì‚İ‚É•Ô“š
+                if (data[p+2] == 200) {    // ã‚­ãƒ¼ãƒ—ã‚¢ãƒ©ã‚¤ãƒ–ãªã‚‰é€ä¿¡å´ã®ã¿ã«è¿”ç­”
                     sock.write(d);
-                } else {                   // ‚»‚¤‚Å‚È‚¢ê‡‚İ‚ñ‚È‚É‘—M
+                } else {                   // ãã†ã§ãªã„å ´åˆã¿ã‚“ãªã«é€ä¿¡
                     write(sock, d);
                 }
             } else {

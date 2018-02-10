@@ -1,9 +1,9 @@
 /*
-ƒtƒH[ƒ}ƒbƒg
-‚PƒoƒCƒg–Ú@0xFFiƒfƒŠƒ~ƒ^j
-‚QƒoƒCƒg–Ú@idi‘—MÒIDj
-‚RƒoƒCƒg–Ú@’l(0-180)
-@@@@@@ƒL[ƒvƒAƒ‰ƒCƒu(200)
+ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
+ï¼‘ãƒã‚¤ãƒˆç›®ã€€0xFFï¼ˆãƒ‡ãƒªãƒŸã‚¿ï¼‰
+ï¼’ãƒã‚¤ãƒˆç›®ã€€idï¼ˆé€ä¿¡è€…IDï¼‰
+ï¼“ãƒã‚¤ãƒˆç›®ã€€å€¤(0-180)
+ã€€ã€€ã€€ã€€ã€€ã€€ã‚­ãƒ¼ãƒ—ã‚¢ãƒ©ã‚¤ãƒ–(200)
 */
 var net = require('net');
 var HOST = 'localhost';
@@ -30,7 +30,7 @@ function connect() {
     global.sock.on('data', function(data) {
         global.watchdog = new Date();
 
-        if (data.length >= 3) {    // ‚RƒoƒCƒgˆÈã‚Ìƒf[ƒ^‚Ì‚İg—p
+        if (data.length >= 3) {    // ï¼“ãƒã‚¤ãƒˆä»¥ä¸Šã®ãƒ‡ãƒ¼ã‚¿ã®ã¿ä½¿ç”¨
             var p = -1;
             for (var i = data.length - 2; i--; ) {
 //                console.log(data[i]);
@@ -38,8 +38,8 @@ function connect() {
                     p = i;
                 }
             }
-            if (p >= 0) {                      // ³‚µ‚¢ƒf[ƒ^‚ ‚è
-                if (data[p+1] == RID) {        // ©•ªˆ¶‚Ä‚Ìƒf[ƒ^
+            if (p >= 0) {                      // æ­£ã—ã„ãƒ‡ãƒ¼ã‚¿ã‚ã‚Š
+                if (data[p+1] == RID) {        // è‡ªåˆ†å®›ã¦ã®ãƒ‡ãƒ¼ã‚¿
                     console.log('* receive id:' + data[p+1] + ' val:' + data[p+2] + ' len:' + data.length);
                 } else {
                     console.log('  receive id:' + data[p+1] + ' val:' + data[p+2] + ' len:' + data.length);
@@ -101,7 +101,7 @@ function senddata() {
     }
     //var rand = Math.floor( Math.random() * 180 )
     var rand = Math.floor( Math.random() * 256 );
-    //d = String.fromCharCode(rand);      // 1ƒoƒCƒg‚Ì•¶š—ñiƒR[ƒhj‚É‚·‚é
+    //d = String.fromCharCode(rand);      // 1ãƒã‚¤ãƒˆã®æ–‡å­—åˆ—ï¼ˆã‚³ãƒ¼ãƒ‰ï¼‰ã«ã™ã‚‹
     d = new Buffer(3);
     d[0] = 255;
     d[1] = ID;
@@ -114,7 +114,7 @@ function senddata() {
 
 connect();
 
-if (MODE != 'r') {    // óMƒeƒXƒg‚Å‚È‚¢‚È‚ç‘—M‚·‚é
+if (MODE != 'r') {    // å—ä¿¡ãƒ†ã‚¹ãƒˆã§ãªã„ãªã‚‰é€ä¿¡ã™ã‚‹
     global.watchdog = new Date();
     setTimeout(keepalive, 2000);
     setTimeout(senddata, 1000);
