@@ -1,3 +1,15 @@
+整理する
+不要なディレクトリ削除
+nodetcpclient
+src
+bin
+
+LINEは直接呼ぶ
+
+
+
+
+
 # raspi-yoro
 ## 遠隔お酌装置
 
