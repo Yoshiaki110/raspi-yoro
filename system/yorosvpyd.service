@@ -8,7 +8,7 @@ User=root
 WorkingDirectory=/home/pi/raspi-yoro
 ExecStart=/usr/bin/python /home/pi/raspi-yoro/servo.py
 Restart=on-failure
-RestartSec=10
+RestartSec=1
 KillMode=process
  
 [Install]

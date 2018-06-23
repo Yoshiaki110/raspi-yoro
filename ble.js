@@ -111,6 +111,7 @@ function keepalive() {
     if (dt > 5000) {
         setServo("302\n");         // LED OFF
         setServo("202\n");         // LED OFF
+        setAngle(180);
         process.exit(1)
     }
 

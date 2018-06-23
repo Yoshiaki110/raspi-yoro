@@ -1,20 +1,25 @@
 # 注意6/23バージョンアップで
 # SPORTに独自ポートの番号を入れる必要がある
 # 現環境ではポー番号は80
+## sudo systemctl disable yorobled
+## restart時間を１秒にする
+  sudo vi /etc/systemd/system/yorobled.service  
+  sudo vi /etc/systemd/system/yorosvpyd.service  
+
 
 # raspi-yoro
 ## 遠隔お酌装置
 
 ### プログラム
 - ble.js
-  - センサ値をクラウドに送信
+  - センサ値をクラウドに送信、クラウドにからセンサ値を受信
   - 開始コマンド「sudo systemctl start yorobled」
   - 終了コマンド「sudo systemctl stop yorobled」
   - ログ参照「sudo journalctl -u yorobled」
   - コンソール起動「sudo node ble.js」（カレントディレクトリを/home/pi/raspi-yoroで実行）
 
-- servo.js
-  - クラウドにからセンサ値を受信
+- servo.js（今使ってない）
+  - クラウドにからセンサ値を受信（今使ってない）
   - 開始コマンド「sudo systemctl start yorosvjsd」
   - 終了コマンド「sudo systemctl stop yorosvjsd」
   - ログ参照「sudo journalctl -u yorosvjsd」
@@ -35,7 +40,7 @@
   - 9  LED BLE接続確認用
   - 8  LED(待機スイッチの)
   - 7  サーボ
-- 「gpio readall」でピンアサインが見れる
+- 「gpio readall」でピンアサインが見れる
 
 ### Raspberry Piと接続
 - 無線LAN設定
