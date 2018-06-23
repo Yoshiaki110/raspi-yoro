@@ -33,7 +33,7 @@ setServo("202\n");         // LED OFF
 
 var net = require('net');
 var HOST = config.HOST;
-var PORT = 80;
+var PORT = config.SPORT;
 var ID = config.ID;
 var RID = config.RID;
 console.log('myID: ' + ID + ' recvID: ' + RID);
