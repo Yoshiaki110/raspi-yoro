@@ -1,3 +1,18 @@
+# 7/18 デモモード追加（環境だけ）
+起動時にボタンが押されていたら、button_onファイルを作成する
+
+  cd system  
+  sudo cp yoroswpyd.service /etc/systemd/system/  
+  sudo systemctl enable yoroswpyd  
+
+  sudo cp yorobled.service /etc/systemd/system/  
+  sudo cp yorosvpyd.service /etc/systemd/system/  
+  sudo reboot  
+
+----------------
+
+
+
 # 注意6/23バージョンアップで
 # SPORTに独自ポートの番号を入れる必要がある
 # 現環境ではポー番号は80
