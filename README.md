@@ -1,13 +1,13 @@
 # 7/18 デモモード追加（環境だけ）
 起動時にボタンが押されていたら、button_onファイルを作成する
 
-  cd system
-  sudo cp yoroswpyd.service /etc/systemd/system/
-  sudo systemctl enable yoroswpyd
+  cd system  
+  sudo cp yoroswpyd.service /etc/systemd/system/  
+  sudo systemctl enable yoroswpyd  
 
-  sudo cp yorobled.service /etc/systemd/system/
-  sudo cp yorosvpyd.service /etc/systemd/system/
-  sudo reboot
+  sudo cp yorobled.service /etc/systemd/system/  
+  sudo cp yorosvpyd.service /etc/systemd/system/  
+  sudo reboot  
 
 ----------------
 
