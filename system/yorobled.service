@@ -1,6 +1,6 @@
 [Unit]
 Description=yoro ble service
-After=syslog.target network.target pigpio.target
+After=syslog.target network.target pigpio.target yoroswd.service
  
 [Service]
 Type=simple

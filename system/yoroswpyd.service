@@ -1,0 +1,15 @@
+[Unit]
+Description=yoro switch(python) service
+After=syslog.target network.target pigpio.target
+ 
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/pi/raspi-yoro
+ExecStart=/usr/bin/python /home/pi/raspi-yoro/sw.py
+Restart=no
+KillMode=process
+ 
+[Install]
+WantedBy=multi-user.target
+
