@@ -9,6 +9,9 @@
   sudo cp yorosvpyd.service /etc/systemd/system/  
   sudo reboot  
 
+# raspi-zeroの場合、nodeのパスが「/usr/local/bin/node」なの直すこと
+
+
 ----------------
 
 
