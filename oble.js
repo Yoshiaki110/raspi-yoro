@@ -157,67 +157,59 @@ function send(data) {
 }
 
 
+var noble = require('noble');
 
-var SensorTag = require('sensortag');
+const NAME = 'IM';
+const ADDRESS = 'e7e6a420bdcf';
+const INTERVAL_MILLISEC = 100;
 
-var sended = -1000;
+//discovered BLE device
+function discovered(peripheral) {
+  const device = {
+    name: peripheral.advertisement.localName,
+    uuid: peripheral.uuid,
+    rssi: peripheral.rssi
+  };
+  if (NAME === device.name && ADDRESS === device.uuid) {
+    const v = peripheral.advertisement.manufacturerData.toString('hex').substring(30, 34);
+    var s = v.substring(2,4) + v.substring(0,2);
+    var d = parseInt(s, 16) * 360 / 65535;
+    //  0     90     180
+    // 55      0
+    //       360     305
+//    console.log(d);
+    if (d < 55) {
+      d = (d * -1 + 55) * 90 / 55;
+      console.log('+   ' + parseInt(d));
+      send(d);
+      setServo("200\n");         // LED 点滅
+    } else if (d < 305) {
+      ; // nop
+    } else if (d <= 360) {
+      d = (360 - d) * 90 / 55 + 90;
+      console.log('-   ' + parseInt(d));
+      send(d);
+      setServo("200\n");         // LED 点滅
+    }
+//    console.log('');
+  }
+}
 
-/*
-* $ npm install sandeepmistry/node-sensortag ## (require `libbluetooth-dev`)
-* $ TI_UUID=your_ti_sensor_tag_UUID node this_file.js
-*/
-
-function ti_accelerometer(conned_obj) {
-  var period = 300; // ms
-  conned_obj.enableAccelerometer(function() {
-    conned_obj.setAccelerometerPeriod(period, function() {
-      conned_obj.notifyAccelerometer(function() {
-        console.info("加速度センサの取得間隔: " + period + "ms");
-        conned_obj.on('accelerometerChange', function(x, y, z) {
-            //console.log('\taccel_x = %d G', x.toFixed(1));
-            //console.log('\taccel_y = %d G', y.toFixed(1));
-            //console.log('\taccel_z = %d G', z.toFixed(1));
-//            var pos = parseInt((z + 1) * 90);
-            var pos = parseInt((z - 1) * (-90));
-            if (pos > 180) { pos = 180; }
-            if (pos < 0) { pos = 0; }
-            var val = parseInt(pos);
-            if (Math.abs(sended - val) > 1) {        // ほぼ同じ値は送信しない
-              if (localmode) {
-                setAngle(val);
-              } else {
-                console.info("val: " + val);
-                send(val);
-                setServo("200\n");         // LED 点滅
-              }
-              sended = val;
-            }
-        });
-      });
-    });
-  });
+//BLE scan start
+function scanStart() {
+  setInterval(() => { noble.startScanning(); }, INTERVAL_MILLISEC);
+  noble.on('discover', discovered);
 }
 
 function setupSensor() {
-  console.info("CC2650を探しています");
-  SensorTag.discover(function(sensorTag) {
-    console.info("CC2650を発見 id:", sensorTag.id);
-    sensorTag.connectAndSetup(function() {
-      sensorTag.readDeviceName(function(error, deviceName) {
-        console.info("CC2650と接続しました: " + deviceName);
-        setServo("201\n");         // LED ON
-        ti_accelerometer(sensorTag);
-      });
-    });
-    /* In case of SensorTag PowerOff or out of range when fired `onDisconnect` */
-    sensorTag.on("disconnect", function() {
-      console.info("CC2650との接続解除 id:", sensorTag.id);
-      setServo("202\n");         // LED OFF
-      //process.exit(1);
-      setupSensor();
-    });
-  });
+  if (noble.state === 'poweredOn'){
+    scanStart();
+  } else {
+    noble.on('stateChange', scanStart);
+  }
 }
+
+//setupSensor();
 
 function prepare() {
   if (common.IpAddress().length == 0) {
@@ -231,6 +223,5 @@ function prepare() {
     common.LineMsg('ble.js開始しました');
   }
 }
-
 prepare();
 
