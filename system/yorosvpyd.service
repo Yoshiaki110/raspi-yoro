@@ -1,6 +1,6 @@
 [Unit]
 Description=yoro servo(python) service
-After=syslog.target network.target pigpio.target yoroswd.service
+After=syslog.target network.target pigpio.target yoroswpyd.service
  
 [Service]
 Type=simple
